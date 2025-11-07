@@ -1,0 +1,9 @@
+name: On PR Change
+
+on:
+    pull_request:
+        types: [opened, synchronize]
+
+jobs:
+    call-labeler:
+        uses: Astro-BEAM-AUTh/infrastructure/.github/workflows/labeler.yml@main
