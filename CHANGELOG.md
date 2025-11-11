@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.1.0 (2025-11-11)
+
+
 ## v0.0.0 (2025-11-07)
 
 ### Chores
