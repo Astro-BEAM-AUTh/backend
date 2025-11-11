@@ -7,3 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.0.0 (2025-11-07)
+
+### Chores
+
+- Initialize project
+  ([`7622825`](https://github.com/Astro-BEAM-AUTh/backend/commit/7622825b43cc909a768ca3c9bf9429b9077f1889))
