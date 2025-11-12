@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 from sqlmodel._compat import SQLModelConfig
 
+from backend.utils.time_utils import utc_now
+
 if TYPE_CHECKING:
     from backend.models.user import User
 
@@ -100,9 +102,9 @@ class Observation(ObservationBase, table=True):
 
     # Status tracking
     status: str = Field(default="pending", description="Current observation status")
-    submitted_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp of submission")
+    submitted_at: datetime = Field(default_factory=utc_now, description="Timestamp of submission")
     completed_at: datetime | None = Field(default=None, description="Timestamp of completion")
 
     # Additional metadata
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="Record creation timestamp")
-    updated_at: datetime = Field(default_factory=datetime.utcnow, description="Record update timestamp")
+    created_at: datetime = Field(default_factory=utc_now, description="Record creation timestamp")
+    updated_at: datetime = Field(default_factory=utc_now, description="Record update timestamp")

@@ -2,7 +2,6 @@
 
 import logging
 import uuid
-from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -11,6 +10,7 @@ from sqlmodel import select
 
 from backend.database import get_db
 from backend.models import Observation, ObservationCreate, ObservationRead, User, UserCreate
+from backend.utils.time_utils import utc_now
 
 router = APIRouter(
     prefix="/telescope",
@@ -64,7 +64,7 @@ async def submit_observation(
             await db.flush()  # Flush to get the user.id
 
         # Generate unique observation ID
-        observation_id = f"obs_{datetime.now(UTC).strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}"
+        observation_id = f"obs_{utc_now().strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}"
 
         # Create observation record
         db_observation = Observation(
@@ -82,7 +82,7 @@ async def submit_observation(
             integration_time=observation.integration_time,
             output_filename=observation.output_filename,
             status="pending",
-            submitted_at=datetime.now(UTC),
+            submitted_at=utc_now(),
         )
 
         # Send to Kafka for processing
