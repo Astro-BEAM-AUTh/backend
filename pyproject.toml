@@ -17,10 +17,11 @@ dependencies = [
     "sqlalchemy>=2.0.44",
     "uvicorn>=0.38.0",
     "uvloop>=0.22.1 ; sys_platform != 'win32'",
+    "sqlmodel>=0.0.27",
 ]
 
 [project.scripts]
-backend = "backend:main"
+backend = "backend.main:main"
 
 [build-system]
 requires = ["uv_build>=0.9.2,<0.10.0"]

@@ -1,20 +1,22 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import Annotated
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.configs.config import settings
 from backend.configs.custom_logging import setup_logger
-from backend.database import close_database_connection, initialize_database_connection
+from backend.database import close_database_connection, create_db_and_tables, initialize_database_connection
+from backend.models import StatusResponse
 from backend.routers import telescope, web
 
 logger = setup_logger("astro_backend")
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
+async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     """
     Lifecycle manager for the FastAPI application.
 
@@ -26,11 +28,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     try:
         initialize_database_connection()
 
+        if settings.create_tables_on_startup:
+            await create_db_and_tables()
+
         # TODO @dyka3773: Initialize Kafka producer and consumer when implemented  # noqa: FIX002
         # await initialize_kafka_producer()  # noqa: ERA001
         # await initialize_kafka_consumer()  # noqa: ERA001
         logger.info("All services initialized successfully")
-    except Exception as e:
+    except Exception:
         logger.exception("Failed to initialize services")
         raise
 
@@ -44,7 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
         # await close_kafka_consumer()  # noqa: ERA001
         await close_database_connection()
         logger.info("All services closed successfully")
-    except Exception as e:
+    except Exception:
         logger.exception("Error during shutdown")
 
 
@@ -54,6 +59,9 @@ app = FastAPI(
     description="Backend API for the Astro BEAM project",
     lifespan=lifespan,
 )
+
+app.docs_url = "/docs" if settings.debug else None
+app.redoc_url = "/redoc" if settings.debug else None
 
 # Configure CORS middleware
 app.add_middleware(
@@ -74,20 +82,44 @@ app.include_router(
 )
 
 
-@app.get("/")
-async def root() -> dict:
+@app.get(
+    "/",
+    description="Root endpoint providing basic API information.",
+    responses={
+        200: {"description": "API information retrieved successfully"},
+    },
+)
+async def root() -> Annotated[
+    StatusResponse,
+    Body(
+        examples=[
+            {
+                "status": "success",
+                "message": "Welcome to Astro BEAM Backend API",
+                "data": {
+                    "version": "1.0.0",
+                    "docs_url": "/docs",
+                    "redoc_url": "/redoc",
+                },
+            },
+        ],
+    ),
+]:
     """
     Root endpoint.
 
     Returns:
-        dict: Welcome message and API info
+        StatusResponse: Welcome message and API info
     """
-    return {
-        "message": "Welcome to Astro BEAM Backend API",
-        "version": settings.app_version,
-        "docs_url": "/docs" if settings.debug else None,
-        "redoc_url": "/redoc" if settings.debug else None,
-    }
+    return StatusResponse(
+        status="success",
+        message="Welcome to Astro BEAM Backend API",
+        data={
+            "version": settings.app_version,
+            "docs_url": "/docs" if settings.debug else None,
+            "redoc_url": "/redoc" if settings.debug else None,
+        },
+    )
 
 
 def main() -> None:

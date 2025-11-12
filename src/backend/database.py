@@ -3,15 +3,11 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from backend.configs.config import settings
-
-
-class Base(DeclarativeBase):
-    """Base class for all database models."""
-
 
 # Database engine
 engine: AsyncEngine | None = None
@@ -43,6 +39,24 @@ async def close_database_connection() -> None:
     """Close database connection."""
     if engine is not None:
         await engine.dispose()
+
+
+async def create_db_and_tables() -> None:
+    """
+    Create database tables based on SQLModel metadata.
+
+    Note: In production, you should use Alembic migrations instead.
+    This is useful for development and testing.
+    """
+    if engine is None:
+        msg = "Database not initialized. Call initialize_database_connection() first."
+        raise RuntimeError(msg)
+
+    async with engine.begin() as conn:
+        # Import models to register them with SQLModel
+        from backend.models import Observation, User  # noqa: F401, PLC0415
+
+        await conn.run_sync(SQLModel.metadata.create_all, tables=[Observation, User])
 
 
 @asynccontextmanager
