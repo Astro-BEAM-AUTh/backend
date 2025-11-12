@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from fastapi import APIRouter
 
 from backend.configs.config import settings
-from backend.schemas import StatusResponse
+from backend.models import StatusResponse
 
 router = APIRouter(
     prefix="/web",
