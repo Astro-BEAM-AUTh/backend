@@ -39,4 +39,4 @@ uv sync --dev
 Contributions are welcome!
 If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request.
 
-Please read our [Contributing Guidelines](https://github.com/Astro-BEAM-AUTh/telescope-data-handler?tab=contributing-ov-file) for more details.
+Please read our [Contributing Guidelines](https://github.com/Astro-BEAM-AUTh/backend?tab=contributing-ov-file) for more details.
