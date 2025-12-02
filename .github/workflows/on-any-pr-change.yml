@@ -7,3 +7,7 @@ on:
 jobs:
     call-labeler:
         uses: Astro-BEAM-AUTh/infrastructure/.github/workflows/labeler.yml@main
+        permissions:
+            issues: write
+            pull-requests: write
+            contents: read

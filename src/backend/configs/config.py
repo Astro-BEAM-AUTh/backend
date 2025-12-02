@@ -42,6 +42,36 @@ class Settings(BaseSettings):
     )
     # TODO @dyka3773: Add more Kafka settings as needed  # noqa: FIX002
 
+    # Email settings
+    smtp_server: str = Field(
+        default="smtp.gmail.com",
+        description="SMTP server hostname",
+    )
+    smtp_port: int = Field(
+        default=587,
+        description="SMTP server port",
+    )
+    smtp_username: str = Field(
+        default="",
+        description="SMTP authentication username",
+    )
+    smtp_password: str = Field(
+        default="",
+        description="SMTP authentication password",
+    )
+    smtp_sender_email: str = Field(
+        default="noreply@astrobeam.example.com",
+        description="Email address to send from",
+    )
+    smtp_use_tls: bool = Field(
+        default=True,
+        description="Use TLS for SMTP connection",
+    )
+    smtp_start_tls: bool = Field(
+        default=True,
+        description="Use STARTTLS for SMTP connection",
+    )
+
     # CORS settings
     cors_origins: list[str] = Field(
         default=[
