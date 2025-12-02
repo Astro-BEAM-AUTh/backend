@@ -1,0 +1,15 @@
+ci:
+- changed-files:
+  - any-glob-to-any-file: .github/**
+
+docs:
+- changed-files:
+  - any-glob-to-any-file: 
+    - docs/**
+    - README.md
+
+email:
+- changed-files:
+  - any-glob-to-any-file: 
+    - src/backend/utils/email/**
+
