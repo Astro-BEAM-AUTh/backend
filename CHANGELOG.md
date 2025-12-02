@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.3.1 (2025-12-02)
+
+### Deps
+
+- Bump the uv-dependencies group across 1 directory with 3 updates
+  ([`4dd8e14`](https://github.com/Astro-BEAM-AUTh/backend/commit/4dd8e14d3a594c5799814353855879fec4500d48))
+
+- Use specific versions to denote the exact version that was used to deploy the app
+  ([`bc98c7c`](https://github.com/Astro-BEAM-AUTh/backend/commit/bc98c7c47a88be43c4af9653062abfb461278b31))
+
+
 ## v0.3.0 (2025-12-02)
 
 ### Bug Fixes

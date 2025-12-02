@@ -1,6 +1,6 @@
 [project]
 name = "backend"
-version = "0.3.0"
+version = "0.3.1"
 description = "Main backend for web and data APIs of the Astro BEAM project"
 readme = "README.md"
 authors = [
