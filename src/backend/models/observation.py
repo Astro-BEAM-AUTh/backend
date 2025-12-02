@@ -1,15 +1,12 @@
 """Telescope observation database model."""
 
 from datetime import datetime
-from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 from sqlmodel._compat import SQLModelConfig
 
+from backend.models.user import User
 from backend.utils.time_utils import utc_now
-
-if TYPE_CHECKING:
-    from backend.models.user import User
 
 
 class ObservationBase(SQLModel):
@@ -98,7 +95,7 @@ class Observation(ObservationBase, table=True):
 
     # User relationship
     user_id: int = Field(foreign_key="users.id", description="ID of the user who submitted the observation")
-    user: "User" = Relationship(back_populates="observations")
+    user: User = Relationship(back_populates="observations")
 
     # Status tracking
     status: str = Field(default="pending", description="Current observation status")

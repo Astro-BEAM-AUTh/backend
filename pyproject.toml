@@ -6,9 +6,10 @@ readme = "README.md"
 authors = [
     { name = "Hercules Konsoulas", email = "dyka3773@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = "==3.13.*"
 dependencies = [
     "aiokafka>=0.12.0",
+    "aiosmtplib>=5.0.0",
     "asyncpg>=0.30.0",
     "fastapi>=0.121.1",
     "pydantic[email]>=2.12.4",
