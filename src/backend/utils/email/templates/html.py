@@ -76,13 +76,13 @@ def create_html_email_body_for_confirmation(observation: Observation, user: User
                     <span class="label">Object:</span> {html.escape(observation.observation_object)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Coordinates:</span> RA {observation.ra}°, Dec {observation.dec}°
+                    <span class="label">Coordinates:</span> RA {html.escape(str(observation.ra))}°, Dec {html.escape(str(observation.dec))}°
                 </div>
                 <div class="detail-row">
-                    <span class="label">Center Frequency:</span> {observation.center_frequency} MHz
+                    <span class="label">Center Frequency:</span> {html.escape(str(observation.center_frequency))} MHz
                 </div>
                 <div class="detail-row">
-                    <span class="label">Integration Time:</span> {observation.integration_time} seconds
+                    <span class="label">Integration Time:</span> {html.escape(str(observation.integration_time))} seconds
                 </div>
                 <div class="detail-row">
                     <span class="label">Observation Type:</span> {html.escape(observation.observation_type)}
@@ -191,13 +191,13 @@ def create_html_email_body_for_completion(observation: Observation, user: User) 
                     <span class="label">Object:</span> {html.escape(observation.observation_object)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Coordinates:</span> RA {observation.ra}°, Dec {observation.dec}°
+                    <span class="label">Coordinates:</span> RA {html.escape(str(observation.ra))}°, Dec {html.escape(str(observation.dec))}°
                 </div>
                 <div class="detail-row">
-                    <span class="label">Center Frequency:</span> {observation.center_frequency} MHz
+                    <span class="label">Center Frequency:</span> {html.escape(str(observation.center_frequency))} MHz
                 </div>
                 <div class="detail-row">
-                    <span class="label">Integration Time:</span> {observation.integration_time} seconds
+                    <span class="label">Integration Time:</span> {html.escape(str(observation.integration_time))} seconds
                 </div>
                 <div class="detail-row">
                     <span class="label">Observation Type:</span> {html.escape(observation.observation_type)}
@@ -215,7 +215,7 @@ def create_html_email_body_for_completion(observation: Observation, user: User) 
                     <span class="label">Completed At:</span> {observation.completed_at.strftime("%Y-%m-%d %H:%M:%S UTC") if observation.completed_at else "N/A"}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Processing Duration:</span> {duration:.2f} hours
+                    <span class="label">Processing Duration:</span> {html.escape(f"{duration:.2f}")} hours
                 </div>
             </div>
 
