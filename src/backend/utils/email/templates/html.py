@@ -1,3 +1,5 @@
+import html
+
 from backend.models.observation import Observation
 from backend.models.user import User
 
@@ -59,34 +61,34 @@ def create_html_email_body_for_confirmation(observation: Observation, user: User
             <h1>Observation Request Confirmed</h1>
         </div>
         <div class="content">
-            <p>Dear {user.username},</p>
+            <p>Dear {html.escape(user.username)},</p>
             <p>Your observation request has been successfully submitted!</p>
 
             <div class="details">
                 <h3>Observation Details</h3>
                 <div class="detail-row">
-                    <span class="label">Observation ID:</span> {observation.observation_id}
+                    <span class="label">Observation ID:</span> {html.escape(str(observation.observation_id))}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Target Name:</span> {observation.target_name}
+                    <span class="label">Target Name:</span> {html.escape(observation.target_name)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Object:</span> {observation.observation_object}
+                    <span class="label">Object:</span> {html.escape(observation.observation_object)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Coordinates:</span> RA {observation.ra}°, Dec {observation.dec}°
+                    <span class="label">Coordinates:</span> RA {html.escape(str(observation.ra))}°, Dec {html.escape(str(observation.dec))}°
                 </div>
                 <div class="detail-row">
-                    <span class="label">Center Frequency:</span> {observation.center_frequency} MHz
+                    <span class="label">Center Frequency:</span> {html.escape(str(observation.center_frequency))} MHz
                 </div>
                 <div class="detail-row">
-                    <span class="label">Integration Time:</span> {observation.integration_time} seconds
+                    <span class="label">Integration Time:</span> {html.escape(str(observation.integration_time))} seconds
                 </div>
                 <div class="detail-row">
-                    <span class="label">Observation Type:</span> {observation.observation_type}
+                    <span class="label">Observation Type:</span> {html.escape(observation.observation_type)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Status:</span> <strong>{observation.status}</strong>
+                    <span class="label">Status:</span> <strong>{html.escape(observation.status)}</strong>
                 </div>
                 <div class="detail-row">
                     <span class="label">Submitted At:</span> {observation.submitted_at.strftime("%Y-%m-%d %H:%M:%S UTC")}
@@ -174,37 +176,37 @@ def create_html_email_body_for_completion(observation: Observation, user: User) 
             <h1>✓ Observation Completed</h1>
         </div>
         <div class="content">
-            <p>Dear {user.username},</p>
+            <p>Dear {html.escape(user.username)},</p>
             <p><strong>Great news!</strong> Your observation has been completed successfully!</p>
 
             <div class="details">
                 <h3>Observation Details</h3>
                 <div class="detail-row">
-                    <span class="label">Observation ID:</span> {observation.observation_id}
+                    <span class="label">Observation ID:</span> {html.escape(str(observation.observation_id))}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Target Name:</span> {observation.target_name}
+                    <span class="label">Target Name:</span> {html.escape(observation.target_name)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Object:</span> {observation.observation_object}
+                    <span class="label">Object:</span> {html.escape(observation.observation_object)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Coordinates:</span> RA {observation.ra}°, Dec {observation.dec}°
+                    <span class="label">Coordinates:</span> RA {html.escape(str(observation.ra))}°, Dec {html.escape(str(observation.dec))}°
                 </div>
                 <div class="detail-row">
-                    <span class="label">Center Frequency:</span> {observation.center_frequency} MHz
+                    <span class="label">Center Frequency:</span> {html.escape(str(observation.center_frequency))} MHz
                 </div>
                 <div class="detail-row">
-                    <span class="label">Integration Time:</span> {observation.integration_time} seconds
+                    <span class="label">Integration Time:</span> {html.escape(str(observation.integration_time))} seconds
                 </div>
                 <div class="detail-row">
-                    <span class="label">Observation Type:</span> {observation.observation_type}
+                    <span class="label">Observation Type:</span> {html.escape(observation.observation_type)}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Output File:</span> <code>{observation.output_filename}</code>
+                    <span class="label">Output File:</span> <code>{html.escape(observation.output_filename)}</code>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Status:</span> <span class="success-badge">{observation.status}</span>
+                    <span class="label">Status:</span> <span class="success-badge">{html.escape(observation.status)}</span>
                 </div>
                 <div class="detail-row">
                     <span class="label">Submitted At:</span> {observation.submitted_at.strftime("%Y-%m-%d %H:%M:%S UTC")}
@@ -213,7 +215,7 @@ def create_html_email_body_for_completion(observation: Observation, user: User) 
                     <span class="label">Completed At:</span> {observation.completed_at.strftime("%Y-%m-%d %H:%M:%S UTC") if observation.completed_at else "N/A"}
                 </div>
                 <div class="detail-row">
-                    <span class="label">Processing Duration:</span> {duration:.2f} hours
+                    <span class="label">Processing Duration:</span> {html.escape(f"{duration:.2f}")} hours
                 </div>
             </div>
 
