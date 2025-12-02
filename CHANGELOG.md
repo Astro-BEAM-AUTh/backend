@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.3.0 (2025-12-02)
+
+### Bug Fixes
+
+- Add HTML escaping to numeric fields for comprehensive XSS protection
+  ([`c55d88d`](https://github.com/Astro-BEAM-AUTh/backend/commit/c55d88db177e5345761a59dc00a725f0bac3f37f))
+
+- Add HTML escaping to prevent XSS in email templates
+  ([`35e1526`](https://github.com/Astro-BEAM-AUTh/backend/commit/35e1526e7493a9f92b6e472939316290b5a251cc))
+
+### Continuous Integration
+
+- Configure labeler action
+  ([`87eb9fc`](https://github.com/Astro-BEAM-AUTh/backend/commit/87eb9fc1e989a5deb543f916ae029b6dc9ab1577))
+
+### Documentation
+
+- Document the command used to test the mailing functionality
+  ([`0df87bf`](https://github.com/Astro-BEAM-AUTh/backend/commit/0df87bf5c626dbb36898dcadfd3b2781b18b464b))
+
+### Features
+
+- Add a function to send an email to notify user when their observation is complete and refactor a
+  bit the email handling code to decouple its text/html templating
+  ([`ec33636`](https://github.com/Astro-BEAM-AUTh/backend/commit/ec33636fc40de581bb58a41c5a92bb9a5f080b7a))
+
+- Create initial email service support when submitting an observation request
+  ([`7a6a7ee`](https://github.com/Astro-BEAM-AUTh/backend/commit/7a6a7eed3d80ec9314ab49d67864f35abf9a0c07))
+
+
 ## v0.2.0 (2025-11-12)
 
 ### Bug Fixes
