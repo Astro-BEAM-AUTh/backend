@@ -10,7 +10,7 @@ from sqlmodel import select
 
 from backend.database import get_db
 from backend.models import Observation, ObservationCreate, ObservationRead, User, UserCreate
-from backend.utils.email_service import send_observation_confirmation_email
+from backend.utils.email.service import send_observation_confirmation_email
 from backend.utils.time_utils import utc_now
 
 router = APIRouter(
