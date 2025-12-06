@@ -1,10 +1,12 @@
+from email.mime.text import MIMEText
+
 from backend.models.observation import Observation
 from backend.models.user import User
 
 
-def create_text_email_body_for_confirmation(observation: Observation, user: User) -> str:
+def create_text_email_body_for_confirmation(observation: Observation, user: User) -> MIMEText:
     """Create plain text email body."""
-    return f"""
+    return MIMEText(f"""
 Dear {user.username},
 
 Your observation request has been successfully submitted!
@@ -27,17 +29,17 @@ Thank you for using Astro BEAM!
 
 Best regards,
 The Astro BEAM Team
-"""
+""", _subtype="plain")
 
 
-def create_text_email_body_for_completion(observation: Observation, user: User) -> str:
+def create_text_email_body_for_completion(observation: Observation, user: User) -> MIMEText:
     """Create plain text email body for observation completion."""
     if observation.completed_at is None:
         msg = "Cannot create completion email for observation without completed_at timestamp"
         raise ValueError(msg)
     duration = (observation.completed_at - observation.submitted_at).total_seconds() / 3600 if observation.completed_at else 0
 
-    return f"""
+    return MIMEText(f"""
 Dear {user.username},
 
 Great news! Your observation has been completed successfully!
@@ -63,4 +65,4 @@ Thank you for using Astro BEAM!
 
 Best regards,
 The Astro BEAM Team
-"""
+""", _subtype="plain")
