@@ -1,12 +1,14 @@
 import html
+from email.mime.text import MIMEText
 
 from backend.models.observation import Observation
 from backend.models.user import User
 
 
-def create_html_email_body_for_confirmation(observation: Observation, user: User) -> str:
+def create_html_email_body_for_confirmation(observation: Observation, user: User) -> MIMEText:
     """Create HTML email body."""
-    return f"""
+    return MIMEText(
+        f"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -107,17 +109,20 @@ def create_html_email_body_for_confirmation(observation: Observation, user: User
     </div>
 </body>
 </html>
-"""
+""",
+        _subtype="html",
+    )
 
 
-def create_html_email_body_for_completion(observation: Observation, user: User) -> str:
+def create_html_email_body_for_completion(observation: Observation, user: User) -> MIMEText:
     """Create HTML email body for observation completion."""
     if observation.completed_at is None:
         msg = "Cannot create completion email for observation without completed_at timestamp"
         raise ValueError(msg)
     duration = (observation.completed_at - observation.submitted_at).total_seconds() / 3600 if observation.completed_at else 0
 
-    return f"""
+    return MIMEText(
+        f"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -234,4 +239,6 @@ def create_html_email_body_for_completion(observation: Observation, user: User) 
     </div>
 </body>
 </html>
-"""
+""",
+        _subtype="html",
+    )

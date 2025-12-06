@@ -29,19 +29,18 @@ async def send_observation_confirmation_email(observation: Observation, user: Us
     try:
         # Create message
         message = MIMEMultipart("alternative")
-        message["Subject"] = f"Observation Request Confirmed: {observation.observation_id}"
         message["To"] = user.email
+        message["Subject"] = f"Observation Request Confirmed: {observation.observation_id}"
 
         # Create email body
-        text_body = create_text_email_body_for_confirmation(observation, user)
-        html_body = create_html_email_body_for_confirmation(observation, user)
+        text_body: MIMEText = create_text_email_body_for_confirmation(observation, user)
+        html_body: MIMEText = create_html_email_body_for_confirmation(observation, user)
+
+        message.attach(text_body)
+        message.attach(html_body)
 
         # Send email
-        await _send_email(
-            message=message,
-            text_body=MIMEText(text_body, "plain"),
-            html_body=MIMEText(html_body, "html"),
-        )
+        await _send_email(message=message)
 
         logger.info(
             "Sent confirmation email to %s for observation %s",
@@ -72,19 +71,18 @@ async def send_observation_completion_email(observation: Observation, user: User
     try:
         # Create message
         message = MIMEMultipart("alternative")
-        message["Subject"] = f"Observation Completed: {observation.observation_id}"
         message["To"] = user.email
+        message["Subject"] = f"Observation Completed: {observation.observation_id}"
 
         # Create email body
-        text_body = create_text_email_body_for_completion(observation, user)
-        html_body = create_html_email_body_for_completion(observation, user)
+        text_body: MIMEText = create_text_email_body_for_completion(observation, user)
+        html_body: MIMEText = create_html_email_body_for_completion(observation, user)
+
+        message.attach(text_body)
+        message.attach(html_body)
 
         # Send email
-        await _send_email(
-            message=message,
-            text_body=MIMEText(text_body, "plain"),
-            html_body=MIMEText(html_body, "html"),
-        )
+        await _send_email(message=message)
 
         logger.info(
             "Sent completion email to %s for observation %s",
@@ -100,26 +98,20 @@ async def send_observation_completion_email(observation: Observation, user: User
         # Don't raise - we don't want email failures to fail the observation update
 
 
-async def _send_email(message: MIMEMultipart, text_body: MIMEText, html_body: MIMEText) -> None:
+async def _send_email(message: MIMEMultipart) -> None:
     """
     Send an email using aiosmtplib.
 
     Args:
         message (MIMEMultipart): The email message to send
-        text_body (MIMEText): The plain text body of the email
-        html_body (MIMEText): The HTML body of the email
     """
     message["From"] = settings.smtp_sender_email
-
-    message.attach(text_body) if text_body else None
-    message.attach(html_body) if html_body else None
 
     await aiosmtplib.send(
         message,
         hostname=settings.smtp_server,
         port=settings.smtp_port,
+        use_tls=settings.smtp_use_tls,
         username=settings.smtp_username,
         password=settings.smtp_password,
-        use_tls=settings.smtp_use_tls,
-        start_tls=settings.smtp_start_tls,
     )
