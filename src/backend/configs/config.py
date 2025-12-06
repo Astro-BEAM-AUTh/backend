@@ -67,10 +67,6 @@ class Settings(BaseSettings):
         default=True,
         description="Use TLS for SMTP connection",
     )
-    smtp_start_tls: bool = Field(
-        default=True,
-        description="Use STARTTLS for SMTP connection",
-    )
 
     # CORS settings
     cors_origins: list[str] = Field(
