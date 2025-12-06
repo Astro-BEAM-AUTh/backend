@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.4.0 (2025-12-06)
+
+### Features
+
+- Add explicit _subtype="plain" to MIMEText constructors for consistency
+  ([`1415a2b`](https://github.com/Astro-BEAM-AUTh/backend/commit/1415a2b222e2b9e9f5d6929a9354883d24b70f2b))
+
+- Add support for our mailserver, fix the MIME parts of the email message to include their policy &
+  decouple unnecessary parameters in `_send_email()`
+  ([`c8ec771`](https://github.com/Astro-BEAM-AUTh/backend/commit/c8ec771ddb9622555fa72f1ae50e29414b97ddee))
+
+
 ## v0.3.1 (2025-12-02)
 
 ### Deps
