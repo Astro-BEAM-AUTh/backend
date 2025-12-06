@@ -6,7 +6,8 @@ from backend.models.user import User
 
 def create_text_email_body_for_confirmation(observation: Observation, user: User) -> MIMEText:
     """Create plain text email body."""
-    return MIMEText(f"""
+    return MIMEText(
+        f"""
 Dear {user.username},
 
 Your observation request has been successfully submitted!
@@ -29,7 +30,9 @@ Thank you for using Astro BEAM!
 
 Best regards,
 The Astro BEAM Team
-""")
+""",
+        _subtype="plain",
+    )
 
 
 def create_text_email_body_for_completion(observation: Observation, user: User) -> MIMEText:
@@ -39,7 +42,8 @@ def create_text_email_body_for_completion(observation: Observation, user: User) 
         raise ValueError(msg)
     duration = (observation.completed_at - observation.submitted_at).total_seconds() / 3600 if observation.completed_at else 0
 
-    return MIMEText(f"""
+    return MIMEText(
+        f"""
 Dear {user.username},
 
 Great news! Your observation has been completed successfully!
@@ -65,4 +69,6 @@ Thank you for using Astro BEAM!
 
 Best regards,
 The Astro BEAM Team
-""")
+""",
+        _subtype="plain",
+    )
