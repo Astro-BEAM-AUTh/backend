@@ -29,7 +29,7 @@ Thank you for using Astro BEAM!
 
 Best regards,
 The Astro BEAM Team
-""")
+""", _subtype="plain")
 
 
 def create_text_email_body_for_completion(observation: Observation, user: User) -> MIMEText:
@@ -65,4 +65,4 @@ Thank you for using Astro BEAM!
 
 Best regards,
 The Astro BEAM Team
-""")
+""", _subtype="plain")
