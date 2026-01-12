@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.4.1 (2026-01-12)
+
+### Deps
+
+- Bump fastapi from 0.123.4 to 0.124.0 in the uv-dependencies group
+  ([`cd96563`](https://github.com/Astro-BEAM-AUTh/backend/commit/cd96563707b9acad76e2b6da9126b6b79bc51a63))
+
+- Bump the uv-dependencies group across 1 directory with 5 updates
+  ([`0498501`](https://github.com/Astro-BEAM-AUTh/backend/commit/04985012684e734923c3dcaa2056d1465b35cde8))
+
+- Bump the uv-dependencies group with 3 updates
+  ([`93fab12`](https://github.com/Astro-BEAM-AUTh/backend/commit/93fab1253044f995778650f70b8b6e140ab83945))
+
+- Bump tox from 4.33.0 to 4.34.1 in the uv-dependencies group
+  ([`cef65d1`](https://github.com/Astro-BEAM-AUTh/backend/commit/cef65d16bb47677954d2987cc012e993df7de3c8))
+
+- Bump tox to v4.34.1 in the lockfile
+  ([`afa7b91`](https://github.com/Astro-BEAM-AUTh/backend/commit/afa7b914466118f1968500d1eb4c9fe9e36de060))
+
+- Pin tox to 4.34.1 in pyproject.toml ([#17](https://github.com/Astro-BEAM-AUTh/backend/pull/17),
+  [`1abd5c0`](https://github.com/Astro-BEAM-AUTh/backend/commit/1abd5c0219c4ca9ccd05c42c9f07e7554c2b4cc0))
+
+- Update tox to specific version 4.34.1 in pyproject.toml
+  ([#17](https://github.com/Astro-BEAM-AUTh/backend/pull/17),
+  [`1abd5c0`](https://github.com/Astro-BEAM-AUTh/backend/commit/1abd5c0219c4ca9ccd05c42c9f07e7554c2b4cc0))
+
+
 ## v0.4.0 (2025-12-06)
 
 ### Features
