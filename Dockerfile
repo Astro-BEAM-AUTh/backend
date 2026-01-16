@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN uv sync
+RUN uv sync --frozen
 
 
 # Place executables in the environment at the front of the path
