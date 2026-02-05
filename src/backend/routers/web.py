@@ -3,7 +3,7 @@
 import logging
 from datetime import UTC, datetime
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from backend.configs.config import settings
 from backend.models import StatusResponse
@@ -12,7 +12,7 @@ router = APIRouter(
     prefix="/web",
     tags=["Web"],
     responses={
-        200: {"description": "Successful Response"},
+        status.HTTP_200_OK: {"description": "Successful Response"},
     },
 )
 
@@ -22,7 +22,9 @@ logger = logging.getLogger("astro_backend")
 @router.get(
     "/health",
     description="Health check endpoint for the API.",
-    responses={200: {"description": "API is healthy"}},
+    responses={
+        status.HTTP_200_OK: {"description": "API is healthy"},
+    },
 )
 async def health_check() -> StatusResponse:
     """
@@ -44,7 +46,9 @@ async def health_check() -> StatusResponse:
 @router.get(
     "/status",
     description="Get overall system status including telescope and observation queue info.",
-    responses={200: {"description": "System status retrieved successfully"}},
+    responses={
+        status.HTTP_200_OK: {"description": "System status retrieved successfully"},
+    },
 )
 async def get_system_status() -> StatusResponse:
     """
@@ -64,11 +68,3 @@ async def get_system_status() -> StatusResponse:
             "last_updated": datetime.now(UTC).isoformat(),
         },
     )
-
-
-# TODO @dyka3773: Implement additional web endpoints as needed  # noqa: FIX002
-# Other possible web endpoints that are currently hardcoded in the frontend:
-# - /open-positions
-# - /members
-# - /articles
-# - /news

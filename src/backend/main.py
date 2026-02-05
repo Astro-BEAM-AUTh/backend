@@ -3,8 +3,13 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 import uvicorn
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.templating import _TemplateResponse
 
 from backend.configs.config import settings
 from backend.configs.custom_logging import setup_logger
@@ -63,6 +68,9 @@ app = FastAPI(
 app.docs_url = "/docs" if settings.debug else None
 app.redoc_url = "/redoc" if settings.debug else None
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="jinja_templates")  # Do not rename this directory to "templates", used in CHANGELOG generation
+
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -119,6 +127,54 @@ async def root() -> Annotated[
             "docs_url": "/docs" if settings.debug else None,
             "redoc_url": "/redoc" if settings.debug else None,
         },
+    )
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    """Serve the favicon.ico file."""
+    return FileResponse("static/favicon.ico")
+
+
+@app.exception_handler(StarletteHTTPException)
+def general_http_exception_handler(request: Request, exception: StarletteHTTPException) -> JSONResponse | _TemplateResponse:
+    message = exception.detail if exception.detail else "An error occurred. Please check your request and try again."
+
+    if request.url.path.startswith("/v1"):
+        return JSONResponse(
+            status_code=exception.status_code,
+            content={"detail": message},
+        )
+
+    return templates.TemplateResponse(
+        request,
+        "error.html",  # TODO @dyka3773: Create a dedicated validation error template # noqa: FIX002
+        {
+            "status_code": exception.status_code,
+            "title": exception.status_code,
+            "message": message,
+        },
+        status_code=exception.status_code,
+    )
+
+
+@app.exception_handler(RequestValidationError)
+def validation_exception_handler(request: Request, exception: RequestValidationError) -> JSONResponse | _TemplateResponse:
+    if request.url.path.startswith("/v1"):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            content={"detail": exception.errors()},
+        )
+
+    return templates.TemplateResponse(
+        request,
+        "error.html",  # TODO @dyka3773: Create a dedicated validation error template # noqa: FIX002
+        {
+            "status_code": status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "title": status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "message": "Invalid request. Please check your input and try again.",
+        },
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
     )
 
 

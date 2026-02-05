@@ -24,10 +24,10 @@ logger = logging.getLogger("astro_backend")
 @router.post(
     "/observations",
     description="Submit a new telescope observation request.",
+    status_code=status.HTTP_202_ACCEPTED,
     responses={
-        202: {"description": "Observation request accepted"},
-        400: {"description": "Bad Request"},
-        503: {"description": "Telescope service unavailable"},
+        status.HTTP_202_ACCEPTED: {"description": "Observation request accepted"},
+        status.HTTP_503_SERVICE_UNAVAILABLE: {"description": "Telescope service unavailable"},
     },
 )
 async def submit_observation(
@@ -112,15 +112,16 @@ async def submit_observation(
         ) from e
     else:
         # Convert database model to read schema
-        return ObservationRead.model_validate(db_observation)
+        return ObservationRead.model_validate(db_observation).model_dump()
 
 
 @router.delete(
     "/observations/{observation_id}",
     description="Cancel a pending telescope observation request.",
+    status_code=status.HTTP_204_NO_CONTENT,
     responses={
-        204: {"description": "Observation cancelled successfully"},
-        404: {"description": "Observation not found"},
+        status.HTTP_204_NO_CONTENT: {"description": "Observation cancelled successfully"},
+        status.HTTP_404_NOT_FOUND: {"description": "Observation not found"},
     },
 )
 async def cancel_observation(observation_id: str) -> None:
