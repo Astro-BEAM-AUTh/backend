@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.5.0 (2026-02-05)
+
+### Chores
+
+- **docker**: Dockerize the app in order to be deployable
+  ([#19](https://github.com/Astro-BEAM-AUTh/backend/pull/19),
+  [`64ca589`](https://github.com/Astro-BEAM-AUTh/backend/commit/64ca58960c2b42fdd96d1c9c675be45eb1f55b07))
+
+- **docker**: Dockerize the app in order to be deployable
+  ([`f83aa57`](https://github.com/Astro-BEAM-AUTh/backend/commit/f83aa57620b721246ce9b175466f094ac02b81e6))
+
+- **docker**: Implement copilot's suggestions
+  ([#19](https://github.com/Astro-BEAM-AUTh/backend/pull/19),
+  [`64ca589`](https://github.com/Astro-BEAM-AUTh/backend/commit/64ca58960c2b42fdd96d1c9c675be45eb1f55b07))
+
+- **docker**: Implement copilot's suggestions
+  ([`d862c81`](https://github.com/Astro-BEAM-AUTh/backend/commit/d862c81b96b0d878a9b7c1064577b88efa6f9d31))
+
+- **docker**: Use 'uv sync --frozen' to ensure reproducible builds
+  ([#19](https://github.com/Astro-BEAM-AUTh/backend/pull/19),
+  [`64ca589`](https://github.com/Astro-BEAM-AUTh/backend/commit/64ca58960c2b42fdd96d1c9c675be45eb1f55b07))
+
+- **docker**: Use 'uv sync --frozen' to ensure reproducible builds
+  ([`6af2d70`](https://github.com/Astro-BEAM-AUTh/backend/commit/6af2d700829ea4329b7b82e650c9bd5f843585db))
+
+### Deps
+
+- Bump sqlmodel from 0.0.31 to 0.0.32 in the uv-dependencies group
+  ([`93ad862`](https://github.com/Astro-BEAM-AUTh/backend/commit/93ad8628a9bbcd003736c8ddc412254681f0e34e))
+
+- Bump the uv-dependencies group with 2 updates
+  ([`213f373`](https://github.com/Astro-BEAM-AUTh/backend/commit/213f373b23d824ea5932bbe52a5dc038d9fae245))
+
+### Features
+
+- Add favicon, exception handling on general and validation errors and correct how requests
+  regarding observations are documented in fastapi
+  ([`2efdc98`](https://github.com/Astro-BEAM-AUTh/backend/commit/2efdc9821f6131d27825ea943d3667d80b8d8e1e))
+
+- Create an HTML error page and support for minimal front end handling from the server
+  ([`fca1f94`](https://github.com/Astro-BEAM-AUTh/backend/commit/fca1f94398110fa33438f1ab44a4a7f73217ef15))
+
+### Refactoring
+
+- Remove TODO comment that was no longer applicable, change the response documentation status types
+  to match the actual return types
+  ([`6b95273`](https://github.com/Astro-BEAM-AUTh/backend/commit/6b95273ea19d052ddcc17350ce986325a2bb1fee))
+
+
 ## v0.4.1 (2026-01-12)
 
 ### Deps
