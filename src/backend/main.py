@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import Body, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
@@ -69,7 +69,7 @@ app.docs_url = "/docs" if settings.debug else None
 app.redoc_url = "/redoc" if settings.debug else None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="jinja_templates")  # Do not rename this directory to "templates", used in CHANGELOG generation
 
 # Configure CORS middleware
 app.add_middleware(
@@ -128,6 +128,12 @@ async def root() -> Annotated[
             "redoc_url": "/redoc" if settings.debug else None,
         },
     )
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    """Serve the favicon.ico file."""
+    return FileResponse("static/favicon.ico")
 
 
 @app.exception_handler(StarletteHTTPException)

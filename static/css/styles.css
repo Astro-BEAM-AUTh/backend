@@ -1,0 +1,162 @@
+:root {
+  /* Fonts */
+  --font-heading: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+
+  /* Colors */
+  --color-bg-body: #fafafa;
+  --color-bg-content: #ffffff;
+  --color-text-primary: #333333;
+  --color-text-heading: #444444;
+  --color-steel: #527c9f;
+  --color-nav-link: #cbd5db;
+  --color-nav-link-hover: #ffffff;
+  --color-link-hover: #428bca;
+  --color-border: #dddddd;
+  --color-border-light: #e3e3e3;
+
+  /* Spacing */
+  --spacing-xl: 5rem;
+
+  /* Sizing */
+  --article-img-size: 4rem; /* 64px converted to rem */
+  --account-img-size: 7.813rem; /* 125px converted to rem */
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-body);
+  color: var(--color-text-primary);
+}
+
+main {
+  padding-top: var(--spacing-xl);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--color-text-heading);
+}
+
+a {
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-link-hover);
+  outline-offset: 2px;
+}
+
+/* Content Sections */
+.content-section {
+  background: var(--color-bg-content);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05);
+  transition: box-shadow 0.15s ease, transform 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.content-section:hover {
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+  border-color: var(--color-border-light);
+}
+
+/* Articles */
+.article-title {
+  color: var(--color-text-heading);
+  transition: color 0.2s ease-in-out;
+}
+
+a.article-title:hover,
+a.article-title:focus {
+  color: var(--color-link-hover);
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+  font-size: 1.25rem;
+}
+
+/* Custom Button Colors - Light Mode */
+.btn-outline-primary {
+  --bs-btn-color: #527c9f;
+  --bs-btn-border-color: #527c9f;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #466a87;
+  --bs-btn-hover-border-color: #3f6179;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #3f6179;
+  --bs-btn-active-border-color: #3a5b72;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: #495057;
+  --bs-btn-border-color: #6c757d;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #5a6268;
+  --bs-btn-hover-border-color: #545b62;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #545b62;
+  --bs-btn-active-border-color: #4e555b;
+}
+
+.btn-outline-danger {
+  --bs-btn-color: #a85b5b;
+  --bs-btn-border-color: #a85b5b;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #924e4e;
+  --bs-btn-hover-border-color: #874848;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #874848;
+  --bs-btn-active-border-color: #7c4242;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #527c9f;
+  --bs-btn-border-color: #527c9f;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #466a87;
+  --bs-btn-hover-border-color: #3f6179;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #3f6179;
+  --bs-btn-active-border-color: #3a5b72;
+}
+
+.btn-danger {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #a85b5b;
+  --bs-btn-border-color: #a85b5b;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #924e4e;
+  --bs-btn-hover-border-color: #874848;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #874848;
+  --bs-btn-active-border-color: #7c4242;
+}
+
+/* Custom Modal Colors */
+.modal-header.bg-success {
+  background-color: #4a7c5d !important;
+}
+
+.modal-header.bg-danger {
+  background-color: #a85b5b !important;
+}
+
+/* Ensure modal header text stays white in both themes */
+.modal-header.bg-success .modal-title,
+.modal-header.bg-danger .modal-title {
+  color: #ffffff !important;
+}
