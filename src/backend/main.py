@@ -137,10 +137,10 @@ async def favicon() -> FileResponse:
 
 
 @app.exception_handler(StarletteHTTPException)
-def general_http_exception_handler(request: Request, exception: StarletteHTTPException) -> JSONResponse | _TemplateResponse:
+async def general_http_exception_handler(request: Request, exception: StarletteHTTPException) -> JSONResponse | _TemplateResponse:
     message = exception.detail if exception.detail else "An error occurred. Please check your request and try again."
 
-    if request.url.path.startswith("/v1"):
+    if request.url.path.startswith("/v1/"):
         return JSONResponse(
             status_code=exception.status_code,
             content={"detail": message},
@@ -148,7 +148,7 @@ def general_http_exception_handler(request: Request, exception: StarletteHTTPExc
 
     return templates.TemplateResponse(
         request,
-        "error.html",  # TODO @dyka3773: Create a dedicated validation error template # noqa: FIX002
+        "error.html",
         {
             "status_code": exception.status_code,
             "title": exception.status_code,
@@ -159,8 +159,8 @@ def general_http_exception_handler(request: Request, exception: StarletteHTTPExc
 
 
 @app.exception_handler(RequestValidationError)
-def validation_exception_handler(request: Request, exception: RequestValidationError) -> JSONResponse | _TemplateResponse:
-    if request.url.path.startswith("/v1"):
+async def validation_exception_handler(request: Request, exception: RequestValidationError) -> JSONResponse | _TemplateResponse:
+    if request.url.path.startswith("/v1/"):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={"detail": exception.errors()},

@@ -155,7 +155,7 @@ a.article-title:focus {
   background-color: #a85b5b !important;
 }
 
-/* Ensure modal header text stays white in both themes */
+/* Ensure modal header text stays white */
 .modal-header.bg-success .modal-title,
 .modal-header.bg-danger .modal-title {
   color: #ffffff !important;
