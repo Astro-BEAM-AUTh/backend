@@ -22,7 +22,8 @@ class Settings(BaseSettings):
     environment: str = Field(default="DEV", description="Application environment")
     debug: bool = Field(default=True, description="Debug mode")  # Only for DEV
     host: str = Field(default="127.0.0.1", description="Host to bind to")
-    port: int = Field(default=8000, description="Port to bind to")
+    port: int = Field(default=8000, description="Port to bind to"),
+    jwt_secret: str = Field(default="supabase_jwt_key", description="JWT secret key")
 
     # Database settings
     database_url: PostgresDsn = Field(

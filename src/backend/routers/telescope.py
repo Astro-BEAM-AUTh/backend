@@ -11,6 +11,7 @@ from sqlmodel import select
 from backend.database import get_db
 from backend.models import Observation, ObservationCreate, ObservationRead, User, UserCreate
 from backend.utils.email.service import send_observation_confirmation_email
+from backend.utils.auth import get_current_user 
 from backend.utils.time_utils import utc_now
 
 router = APIRouter(
@@ -19,7 +20,6 @@ router = APIRouter(
 )
 
 logger = logging.getLogger("astro_backend")
-
 
 @router.post(
     "/observations",
@@ -34,6 +34,7 @@ async def submit_observation(
     observation: ObservationCreate,
     requestor: UserCreate,
     db: Annotated[AsyncSession, Depends(get_db)],
+    user_token: Annotated[dict, Depends(get_current_user)]
 ) -> ObservationRead:
     """
     Submit a new telescope observation request.
@@ -51,7 +52,14 @@ async def submit_observation(
     """
     try:
         # Get or create user
-        result = await db.execute(select(User).where(User.user_id == requestor.user_id))
+        # Extract identity safely from JWT
+        supabase_user_id = user_token.get("sub")
+        email = user_token.get("email")
+        # Metadata is where Supabase stores custom user data (like username)
+        username = user_token.get("user_metadata", {}).get("username", email)
+
+
+        result = await db.execute(select(User).where(User.user_id == supabase_user_id))
         user = result.scalar_one_or_none()
 
         if user is None:
