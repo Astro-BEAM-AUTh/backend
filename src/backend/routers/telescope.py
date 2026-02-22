@@ -56,7 +56,6 @@ async def submit_observation(
         supabase_user_id = user_token.get("sub")
         email = user_token.get("email")
         # Metadata is where Supabase stores custom user data (like username)
-        username = user_token.get("user_metadata", {}).get("username", email)
 
 
         result = await db.execute(select(User).where(User.user_id == supabase_user_id))
@@ -65,9 +64,9 @@ async def submit_observation(
         if user is None:
             # Create new user
             user = User(
-                user_id=requestor.user_id,
+                user_id=supabase_user_id,
                 username=requestor.username,
-                email=requestor.email,
+                email=email,
             )
             db.add(user)
             await db.flush()  # Flush to get the user.id
