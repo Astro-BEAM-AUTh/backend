@@ -16,7 +16,7 @@ dependencies = [
     "pydantic-settings==2.13.1",
     "python-dotenv==1.2.2",
     "sqlalchemy==2.0.48",
-    "uvicorn==0.41.0",
+    "uvicorn==0.42.0",
     "uvloop==0.22.1 ; sys_platform != 'win32'",
     "sqlmodel==0.0.37",
 ]
@@ -31,7 +31,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "python-semantic-release>=10.5.2",
-    "tox==4.49.0",
+    "tox==4.49.1",
 ]
 
 [tool.semantic_release]
