@@ -19,10 +19,10 @@ logger = setup_logger("observation_processor")
 async def claim_next_pending_observation() -> Observation | None:
     """Fetch and claim one pending observation for processing."""
     async with get_db_session() as session:
-        result = await session.execute(
+        result = await session.exec(
             select(Observation).where(Observation.status == ObservationStatus.PENDING.value).order_by(Observation.submitted_at.asc()).limit(1),
         )
-        observation = result.scalar_one_or_none()
+        observation = result.first()
 
         if observation is None:
             return None
