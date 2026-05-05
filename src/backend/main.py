@@ -29,29 +29,22 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     """
     logger.info("Starting up the Astro BEAM Backend application...")
     # Perform startup tasks here
-
     try:
         initialize_database_connection()
 
         if settings.create_tables_on_startup:
             await create_db_and_tables()
 
-        # TODO @dyka3773: Initialize Kafka producer and consumer when implemented  # noqa: FIX002
-        # await initialize_kafka_producer()  # noqa: ERA001
-        # await initialize_kafka_consumer()  # noqa: ERA001
         logger.info("All services initialized successfully")
     except Exception:
         logger.exception("Failed to initialize services")
         raise
 
-    yield
+    yield  # Application runs until shutdown
 
     logger.info("Shutting down the Astro BEAM Backend application...")
     # Perform shutdown tasks here
     try:
-        # TODO @dyka3773: Close Kafka producer and consumer when implemented  # noqa: FIX002
-        # await close_kafka_producer()  # noqa: ERA001
-        # await close_kafka_consumer()  # noqa: ERA001
         await close_database_connection()
         logger.info("All services closed successfully")
     except Exception:
