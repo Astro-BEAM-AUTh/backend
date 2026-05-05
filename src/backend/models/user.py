@@ -4,7 +4,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from pydantic import EmailStr
-from sqlmodel import Field, Relationship, SQLModel
+from sqlalchemy import event
+from sqlmodel import Field, Relationship, SQLModel, String
 from sqlmodel._compat import SQLModelConfig
 
 from backend.utils.time_utils import utc_now
@@ -23,9 +24,9 @@ class UserBase(SQLModel):
     model_config: SQLModelConfig = {
         "json_schema_extra": {
             "example": {
-                "user_id": "user_12345",
-                "username": "astro_user",
-                "email": "astro_user@example.com",
+                "user_id": "123456",
+                "username": "astro_test_user",
+                "email": "software@astrobeam.gr",
             },
         },
     }
@@ -49,9 +50,9 @@ class User(UserBase, table=True):
     __tablename__ = "users"
 
     id: int | None = Field(default=None, primary_key=True)
-    user_id: str = Field(unique=True, index=True, description="Unique user identifier")
-    username: str = Field(unique=True, index=True, description="Username")
-    email: str = Field(unique=True, index=True, description="Email address")
+    user_id: str = Field(unique=True, index=True, description="Unique user identifier", sa_type=String())
+    username: str = Field(unique=True, index=True, description="Username", sa_type=String())
+    email: EmailStr = Field(unique=True, index=True, description="Email address", sa_type=String())
 
     # Relationship to observations
     observations: list["Observation"] = Relationship(back_populates="user")
@@ -65,9 +66,9 @@ class User(UserBase, table=True):
         "json_schema_extra": {
             "example": {
                 "id": 1,
-                "user_id": "user_12345",
-                "username": "astro_user",
-                "email": "astro_user@example.com",
+                "user_id": "123456",
+                "username": "astro_test_user",
+                "email": "software@astrobeam.gr",
                 "is_active": True,
                 "created_at": "2024-01-01T12:00:00Z",
                 "updated_at": "2024-01-01T12:00:00Z",
@@ -77,3 +78,9 @@ class User(UserBase, table=True):
 
     def __repr__(self) -> str:
         return f"<User(id={self.id}, user_id='{self.user_id}', username='{self.username}', email='{self.email}')>"
+
+
+@event.listens_for(User, "before_update")
+def update_updated_at(_: object, __: object, target: User) -> None:
+    """Automatically update the 'updated_at' timestamp on record update."""
+    target.updated_at = utc_now()

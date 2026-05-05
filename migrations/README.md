@@ -27,3 +27,9 @@ Inspect migration state:
 uv run backend-db current
 uv run backend-db history
 ```
+
+Create a new database if needed:
+
+```bash
+uv run backend-db create-db
+```
