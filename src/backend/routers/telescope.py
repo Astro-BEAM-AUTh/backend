@@ -10,6 +10,7 @@ from sqlmodel import select
 
 from backend.database import get_db
 from backend.models import Observation, ObservationCreate, ObservationRead, User, UserCreate
+from backend.models.enums.observation_status import ObservationStatus
 from backend.utils.email.service import send_observation_confirmation_email
 from backend.utils.time_utils import utc_now
 
@@ -82,13 +83,9 @@ async def submit_observation(
             observation_type=observation.observation_type,
             integration_time=observation.integration_time,
             output_filename=observation.output_filename,
-            status="pending",
+            status=ObservationStatus.PENDING,
             submitted_at=utc_now(),
         )
-
-        # Send to Kafka for processing
-        # TODO @dyka3773: Implement actual Kafka sending logic  # noqa: FIX002
-        # await send_telescope_observation_request(db_observation) # noqa: ERA001
 
         # Persist observation in database
         db.add(db_observation)
@@ -135,6 +132,7 @@ async def cancel_observation(observation_id: str) -> None:
         HTTPException: If observation not found or cannot be cancelled
     """
     # TODO @dyka3773: Implement actual cancellation logic with database  # noqa: FIX002
+    logger.warning("Not implemented: cancel_observation for observation_id %s", observation_id)
     # For now, we mock the behavior
     if not observation_id.startswith("obs_"):
         raise HTTPException(

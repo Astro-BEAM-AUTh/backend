@@ -13,7 +13,7 @@ from starlette.templating import _TemplateResponse
 
 from backend.configs.config import settings
 from backend.configs.custom_logging import setup_logger
-from backend.database import close_database_connection, create_db_and_tables, initialize_database_connection
+from backend.database import close_database_connection, initialize_database_connection
 from backend.models import StatusResponse
 from backend.routers import telescope, web
 
@@ -29,29 +29,18 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     """
     logger.info("Starting up the Astro BEAM Backend application...")
     # Perform startup tasks here
-
     try:
         initialize_database_connection()
-
-        if settings.create_tables_on_startup:
-            await create_db_and_tables()
-
-        # TODO @dyka3773: Initialize Kafka producer and consumer when implemented  # noqa: FIX002
-        # await initialize_kafka_producer()  # noqa: ERA001
-        # await initialize_kafka_consumer()  # noqa: ERA001
         logger.info("All services initialized successfully")
     except Exception:
         logger.exception("Failed to initialize services")
         raise
 
-    yield
+    yield  # Application runs until shutdown
 
     logger.info("Shutting down the Astro BEAM Backend application...")
     # Perform shutdown tasks here
     try:
-        # TODO @dyka3773: Close Kafka producer and consumer when implemented  # noqa: FIX002
-        # await close_kafka_producer()  # noqa: ERA001
-        # await close_kafka_consumer()  # noqa: ERA001
         await close_database_connection()
         logger.info("All services closed successfully")
     except Exception:
@@ -137,10 +126,10 @@ async def favicon() -> FileResponse:
 
 
 @app.exception_handler(StarletteHTTPException)
-def general_http_exception_handler(request: Request, exception: StarletteHTTPException) -> JSONResponse | _TemplateResponse:
+async def general_http_exception_handler(request: Request, exception: StarletteHTTPException) -> JSONResponse | _TemplateResponse:
     message = exception.detail if exception.detail else "An error occurred. Please check your request and try again."
 
-    if request.url.path.startswith("/v1"):
+    if request.url.path.startswith("/v1/"):
         return JSONResponse(
             status_code=exception.status_code,
             content={"detail": message},
@@ -148,7 +137,7 @@ def general_http_exception_handler(request: Request, exception: StarletteHTTPExc
 
     return templates.TemplateResponse(
         request,
-        "error.html",  # TODO @dyka3773: Create a dedicated validation error template # noqa: FIX002
+        "error.html",
         {
             "status_code": exception.status_code,
             "title": exception.status_code,
@@ -159,8 +148,8 @@ def general_http_exception_handler(request: Request, exception: StarletteHTTPExc
 
 
 @app.exception_handler(RequestValidationError)
-def validation_exception_handler(request: Request, exception: RequestValidationError) -> JSONResponse | _TemplateResponse:
-    if request.url.path.startswith("/v1"):
+async def validation_exception_handler(request: Request, exception: RequestValidationError) -> JSONResponse | _TemplateResponse:
+    if request.url.path.startswith("/v1/"):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={"detail": exception.errors()},

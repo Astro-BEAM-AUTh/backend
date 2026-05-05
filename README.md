@@ -9,6 +9,7 @@
 ## Table of Contents
 - [Overview](#overview)
 - [How to Run](#how-to-run)
+- [Database Management](#database-management)
 - [Development](#development)
 - [Contributing](#contributing)
 
@@ -25,6 +26,52 @@ To run the backend, execute the following command:
 
 ```bash
 uv run backend
+```
+
+## Database Management
+Database lifecycle is managed from this project using Alembic migrations.
+
+Initialize the database and apply all migrations:
+
+```bash
+uv run backend-db init
+```
+
+Apply pending migrations:
+
+```bash
+uv run backend-db upgrade
+```
+
+Create a new migration from model changes:
+
+```bash
+uv run backend-db revision -m "describe change" --autogenerate
+```
+
+Each created revision also generates SQL artifacts in `migrations/versions/sql`:
+- `<revision_id>_upgrade.sql`
+- `<revision_id>_downgrade.sql`
+
+If you want to skip SQL artifact generation for a specific revision:
+
+```bash
+uv run backend-db revision -m "describe change" --autogenerate --no-sql
+```
+
+By default, revision IDs are generated as `YYYYMMDD_NNNN`.
+For example, the first revision on 2026-05-05 is `20260505_0001`.
+You can still override manually:
+
+```bash
+uv run backend-db revision -m "describe change" --autogenerate --rev-id 20260505_0009
+```
+
+Inspect migration state:
+
+```bash
+uv run backend-db current
+uv run backend-db history
 ```
 
 ## Development

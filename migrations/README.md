@@ -1,0 +1,35 @@
+Single-database configuration for Alembic.
+
+## Database Management
+Database lifecycle is managed from this project using Alembic migrations.
+
+Initialize the database and apply all migrations:
+
+```bash
+uv run backend-db init
+```
+
+Apply pending migrations:
+
+```bash
+uv run backend-db upgrade
+```
+
+Create a new migration from model changes:
+
+```bash
+uv run backend-db revision -m "describe change" --autogenerate
+```
+
+Inspect migration state:
+
+```bash
+uv run backend-db current
+uv run backend-db history
+```
+
+Create a new database if needed:
+
+```bash
+uv run backend-db create-db
+```
