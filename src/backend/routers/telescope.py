@@ -83,7 +83,7 @@ async def submit_observation(
             observation_type=observation.observation_type,
             integration_time=observation.integration_time,
             output_filename=observation.output_filename,
-            status=ObservationStatus.PENDING.value,
+            status=ObservationStatus.PENDING,
             submitted_at=utc_now(),
         )
 

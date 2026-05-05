@@ -1,11 +1,11 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ObservationStatus(str, Enum):
+class ObservationStatus(StrEnum):
     """Enumeration for the status of an observation."""
 
     PENDING = "pending"
-    IN_PROGRESS = "running"
+    IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"

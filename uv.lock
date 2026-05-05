@@ -12,6 +12,33 @@ wheels = [
 ]
 
 [[package]]
+name = "alembic"
+version = "1.16.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mako" },
+    { name = "sqlalchemy" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9a/ca/4dc52902cf3491892d464f5265a81e9dff094692c8a049a3ed6a05fe7ee8/alembic-1.16.5.tar.gz", hash = "sha256:a88bb7f6e513bd4301ecf4c7f2206fe93f9913f9b48dac3b78babde2d6fe765e", size = 1969868, upload-time = "2025-08-27T18:02:05.668Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/4a/4c61d4c84cfd9befb6fa08a702535b27b21fff08c946bc2f6139decbf7f7/alembic-1.16.5-py3-none-any.whl", hash = "sha256:e845dfe090c5ffa7b92593ae6687c5cb1a101e91fa53868497dbd79847f9dbe3", size = 247355, upload-time = "2025-08-27T18:02:07.37Z" },
+]
+
+[[package]]
+name = "alembic-postgresql-enum"
+version = "1.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "alembic" },
+    { name = "sqlalchemy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/63/cf/b5147b926441e7cdc12f306465dac488ff22364b1467a09a5d43743b8cfc/alembic_postgresql_enum-1.10.0.tar.gz", hash = "sha256:ea23481de3d6a00d68d369f92a46ff4fa27b2575e39c583145f1e23ea9c7511d", size = 18557, upload-time = "2026-02-23T16:15:04.148Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/58/8a/4db3821584824ac68df00a6ca27331d3f41f40105f22a8dc1b30b1ec83af/alembic_postgresql_enum-1.10.0-py3-none-any.whl", hash = "sha256:39297cb5dc0e71a3e08df1feeab9ffcc1b6aac0be02bf578748d74c442cd3fbf", size = 27774, upload-time = "2026-02-23T16:15:02.789Z" },
+]
+
+[[package]]
 name = "annotated-doc"
 version = "0.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -64,6 +91,8 @@ version = "0.5.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiosmtplib" },
+    { name = "alembic" },
+    { name = "alembic-postgresql-enum" },
     { name = "asyncpg" },
     { name = "fastapi" },
     { name = "pydantic", extra = ["email"] },
@@ -84,6 +113,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiosmtplib", specifier = "==5.1.0" },
+    { name = "alembic", specifier = "==1.16.5" },
+    { name = "alembic-postgresql-enum", specifier = ">=1.10.0" },
     { name = "asyncpg", specifier = "==0.31.0" },
     { name = "fastapi", specifier = "==0.136.1" },
     { name = "pydantic", extras = ["email"], specifier = "==2.13.3" },
@@ -334,6 +365,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67", size = 134899, upload-time = "2025-03-05T20:05:00.369Z" },
+]
+
+[[package]]
+name = "mako"
+version = "1.3.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "markupsafe" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/62/791b31e69ae182791ec67f04850f2f062716bbd205483d63a215f3e062d3/mako-1.3.12.tar.gz", hash = "sha256:9f778e93289bd410bb35daadeb4fc66d95a746f0b75777b942088b7fd7af550a", size = 400219, upload-time = "2026-04-28T19:01:08.512Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bc/b1/a0ec7a5a9db730a08daef1fdfb8090435b82465abbf758a596f0ea88727e/mako-1.3.12-py3-none-any.whl", hash = "sha256:8f61569480282dbf557145ce441e4ba888be453c30989f879f0d652e39f53ea9", size = 78521, upload-time = "2026-04-28T19:01:10.393Z" },
 ]
 
 [[package]]

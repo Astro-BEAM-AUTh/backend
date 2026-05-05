@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlmodel import Field, Relationship, SQLModel
 from sqlmodel._compat import SQLModelConfig
 
+from backend.models.enums.observation_status import ObservationStatus
 from backend.models.user import User
 from backend.utils.time_utils import utc_now
 
@@ -57,7 +58,7 @@ class ObservationRead(ObservationBase):
 
     observation_id: str = Field(description="Unique observation identifier")
     user_id: int = Field(description="ID of the user who submitted the observation")
-    status: str = Field(description="Current observation status")
+    status: ObservationStatus = Field(description="Current observation status")
     submitted_at: datetime = Field(description="Timestamp of submission")
     completed_at: datetime | None = Field(default=None, description="Timestamp of completion")
 
@@ -98,7 +99,7 @@ class Observation(ObservationBase, table=True):
     user: User = Relationship(back_populates="observations")
 
     # Status tracking
-    status: str = Field(default="pending", description="Current observation status")
+    status: ObservationStatus = Field(default=ObservationStatus.PENDING, description="Current observation status")
     submitted_at: datetime = Field(default_factory=utc_now, description="Timestamp of submission")
     completed_at: datetime | None = Field(default=None, description="Timestamp of completion")
 

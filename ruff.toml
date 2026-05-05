@@ -12,6 +12,7 @@ line-length = 150 # Default line length for all linters
 
 extend-exclude = [
     "examples/*",
+    "migrations/*",
 ]
 
 lint.extend-select = [

@@ -30,10 +30,6 @@ class Settings(BaseSettings):
         description="PostgreSQL database URL",
     )
     db_echo: bool = Field(default=True, description="Echo SQL queries")  # Only for DEV
-    create_tables_on_startup: bool = Field(
-        default=False,
-        description="Create database tables on startup (use migrations in production)",
-    )
 
     # Email settings
     smtp_server: str = Field(

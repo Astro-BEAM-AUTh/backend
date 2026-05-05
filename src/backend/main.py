@@ -13,7 +13,7 @@ from starlette.templating import _TemplateResponse
 
 from backend.configs.config import settings
 from backend.configs.custom_logging import setup_logger
-from backend.database import close_database_connection, create_db_and_tables, initialize_database_connection
+from backend.database import close_database_connection, initialize_database_connection
 from backend.models import StatusResponse
 from backend.routers import telescope, web
 
@@ -31,10 +31,6 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     # Perform startup tasks here
     try:
         initialize_database_connection()
-
-        if settings.create_tables_on_startup:
-            await create_db_and_tables()
-
         logger.info("All services initialized successfully")
     except Exception:
         logger.exception("Failed to initialize services")
