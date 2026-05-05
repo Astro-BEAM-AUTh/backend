@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.6.0 (2026-05-05)
+
+### Bug Fixes
+
+- Align the alembic migration with the previous SQL approach
+  ([`ff73bb1`](https://github.com/Astro-BEAM-AUTh/backend/commit/ff73bb167f7dfb7e49e0e80beba75270758f8cfa))
+
+- Use Enum itself in the observation processor tool instead of its instance value
+  ([`a13d9eb`](https://github.com/Astro-BEAM-AUTh/backend/commit/a13d9ebb96bc827d214fd0fb4cf7d645260eb49d))
+
+### Features
+
+- Create an observation processor to simulate the telescope's side
+  ([`f1c5dbe`](https://github.com/Astro-BEAM-AUTh/backend/commit/f1c5dbe759d625d94d607e3ba2d99ebdfaac0638))
+
+- Manage database through Alembic migrations and use an enumerator to define the observation status
+  ([`7d56b10`](https://github.com/Astro-BEAM-AUTh/backend/commit/7d56b10ec1cc92ad0d732a74470d50ea8b1268db))
+
+- Move the observation processor outside the backend project
+  ([`626de1b`](https://github.com/Astro-BEAM-AUTh/backend/commit/626de1bdadacd62324b1203384a194af2c1224e8))
+
+
 ## v0.5.0 (2026-02-05)
 
 ### Chores
