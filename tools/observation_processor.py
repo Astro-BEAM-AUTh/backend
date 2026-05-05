@@ -20,14 +20,14 @@ async def claim_next_pending_observation() -> Observation | None:
     """Fetch and claim one pending observation for processing."""
     async with get_db_session() as session:
         result = await session.exec(
-            select(Observation).where(Observation.status == ObservationStatus.PENDING.value).order_by(Observation.submitted_at.asc()).limit(1),
+            select(Observation).where(Observation.status == ObservationStatus.PENDING).order_by(Observation.submitted_at.asc()).limit(1),
         )
         observation = result.first()
 
         if observation is None:
             return None
 
-        observation.status = ObservationStatus.IN_PROGRESS.value
+        observation.status = ObservationStatus.IN_PROGRESS
         observation.updated_at = utc_now()
 
         logger.info("Claimed observation %s for processing", observation.observation_id)
@@ -45,7 +45,7 @@ async def mark_observation_completed(observation_id: int) -> None:
             logger.warning("Observation with database id %s no longer exists", observation_id)
             return
 
-        observation.status = ObservationStatus.COMPLETED.value
+        observation.status = ObservationStatus.COMPLETED
         observation.completed_at = utc_now()
         observation.updated_at = utc_now()
 
@@ -60,7 +60,7 @@ async def mark_observation_failed(observation_id: int) -> None:
             logger.warning("Observation with database id %s no longer exists", observation_id)
             return
 
-        observation.status = ObservationStatus.FAILED.value
+        observation.status = ObservationStatus.FAILED
         observation.updated_at = utc_now()
 
 
