@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 import jwt
 from fastapi import Header, HTTPException, status
 from jwt import PyJWKClient
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
 from backend.configs.config import settings
@@ -192,6 +193,21 @@ async def get_local_user_by_user_id(db: AsyncSession, user_id: str) -> User | No
     return result.scalar_one_or_none()
 
 
+async def get_local_user_by_email(db: AsyncSession, email: str) -> User | None:
+    """
+    Return a local user by email address.
+
+    Args:
+        db: Database session dependency
+        email: The email address to look up
+
+    Returns:
+        User | None: The local user if found, otherwise None
+    """
+    result = await db.execute(select(User).where(User.email == email))
+    return result.scalar_one_or_none()
+
+
 async def create_local_user(db: AsyncSession, requestor: UserCreate) -> User:
     """
     Create a local user row.
@@ -204,8 +220,19 @@ async def create_local_user(db: AsyncSession, requestor: UserCreate) -> User:
         User: The created local user
     """
     user = User(**requestor.model_dump())
-    db.add(user)
-    await db.flush()
+    try:
+        db.add(user)
+        await db.flush()
+    except IntegrityError as exc:
+        logger.warning("User creation failed due to integrity error: %s", exc)
+        await db.rollback()
+        existing_user = await get_local_user_by_email(db, requestor.email)
+        if existing_user is not None:
+            return existing_user
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A user with this email already exists",
+        ) from exc
     return user
 
 
