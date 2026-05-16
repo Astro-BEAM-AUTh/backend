@@ -113,7 +113,7 @@ def _decode_supabase_token(token: str) -> dict[str, Any]:
     return jwt.decode(
         token,
         signing_key.key,
-        algorithms=allowed_algorithms,
+        algorithms=[algorithm],
         audience=settings.supabase_audience,
         issuer=issuer,
         options={"require": ["exp", "iat", "sub"]},
