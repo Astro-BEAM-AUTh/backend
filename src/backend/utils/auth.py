@@ -203,7 +203,7 @@ async def create_local_user(db: AsyncSession, requestor: UserCreate) -> User:
     Returns:
         User: The created local user
     """
-    user = User(**requestor)
+    user = User(**requestor.model_dump())
     db.add(user)
     await db.flush()
     return user

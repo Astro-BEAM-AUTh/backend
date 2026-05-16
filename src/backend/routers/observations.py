@@ -309,4 +309,5 @@ async def cancel_observation(
     observation.status = ObservationStatus.CANCELLED
     observation.completed_at = utc_now()
     db.add(observation)
+    await db.commit()
     logger.info("Cancelled observation request: %s", observation_id)

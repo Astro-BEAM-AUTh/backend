@@ -40,10 +40,6 @@ class Settings(BaseSettings):
         default="authenticated",
         description="Expected JWT audience",
     )
-    auth_required: bool = Field(
-        default=True,
-        description="Require a verified Supabase JWT for protected endpoints",
-    )
     debug_allow_guest_history: bool = Field(
         default=False,
         description="Allow guest observation history access in debug mode",

@@ -4,7 +4,7 @@ BEGIN;
 
 -- Running upgrade 20260510_0001 -> 20260511_0001
 
-ALTER TABLE users ADD COLUMN auth_provider VARCHAR NOT NULL;
+ALTER TABLE users ADD COLUMN auth_provider VARCHAR NOT NULL DEFAULT 'guest';
 
 DROP INDEX ix_users_username;
 

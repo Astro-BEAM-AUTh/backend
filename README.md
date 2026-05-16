@@ -37,7 +37,6 @@ Required values:
 - `SUPABASE_AUDIENCE`: expected JWT audience (default `authenticated`)
 
 Auth policy values:
-- `AUTH_REQUIRED`: keep `True` in production
 - `DEBUG_ALLOW_GUEST_HISTORY`: temporary debug-only guest history flag; keep `False` in production
 
 ## Database Management
