@@ -7,7 +7,8 @@ from sqlmodel import CheckConstraint, Field, Relationship, SQLModel, String
 from sqlmodel._compat import SQLModelConfig
 
 from backend.models.enums.observation_status import ObservationStatus
-from backend.models.user import User
+from backend.models.enums.observation_type import ObservationType
+from backend.models.user import User, UserCreate
 from backend.utils.time_utils import utc_now
 
 
@@ -25,7 +26,7 @@ class ObservationBase(SQLModel):
     rf_gain: float = Field(description="RF gain in dB")
     if_gain: float = Field(description="IF gain in dB")
     bb_gain: float = Field(description="Baseband gain in dB")
-    observation_type: str = Field(description="Type of observation", sa_type=String(100))
+    observation_type: ObservationType = Field(description="Type of observation", default=ObservationType.TARGET_OBSERVATION)
     integration_time: float = Field(description="Integration time in seconds")
 
     # Output information
@@ -42,7 +43,7 @@ class ObservationBase(SQLModel):
                 "rf_gain": 30.0,
                 "if_gain": 20.0,
                 "bb_gain": 10.0,
-                "observation_type": "imaging",
+                "observation_type": "target_observation",
                 "integration_time": 600.0,
                 "output_filename": "m31_observation.fits",
             },
@@ -76,7 +77,7 @@ class ObservationRead(ObservationBase):
                 "rf_gain": 30.0,
                 "if_gain": 20.0,
                 "bb_gain": 10.0,
-                "observation_type": "imaging",
+                "observation_type": "target_observation",
                 "integration_time": 600.0,
                 "output_filename": "m31_observation.fits",
                 "status": "pending",
@@ -85,6 +86,13 @@ class ObservationRead(ObservationBase):
             },
         },
     }
+
+
+class ObservationSubmissionRequest(SQLModel):
+    """Payload for submitting an observation request."""
+
+    observation: ObservationCreate = Field(description="Observation submission payload")
+    requestor: UserCreate | None = Field(default=None, description="Optional guest requestor metadata")
 
 
 class Observation(ObservationBase, table=True):

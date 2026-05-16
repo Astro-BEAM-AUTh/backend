@@ -20,6 +20,7 @@ class UserBase(SQLModel):
     user_id: str = Field(description="Unique user identifier")
     username: str = Field(description="Username")
     email: EmailStr = Field(description="Email address")
+    auth_provider: str = Field(default="guest", description="Authentication provider")
 
     model_config: SQLModelConfig = {
         "json_schema_extra": {
@@ -27,6 +28,7 @@ class UserBase(SQLModel):
                 "user_id": "123456",
                 "username": "astro_test_user",
                 "email": "software@astrobeam.gr",
+                "auth_provider": "guest",
             },
         },
     }
@@ -51,8 +53,9 @@ class User(UserBase, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     user_id: str = Field(unique=True, index=True, description="Unique user identifier", sa_type=String())
-    username: str = Field(unique=True, index=True, description="Username", sa_type=String())
+    username: str = Field(index=True, description="Username", sa_type=String())
     email: EmailStr = Field(unique=True, index=True, description="Email address", sa_type=String())
+    auth_provider: str = Field(default="guest", index=True, description="Authentication provider", sa_type=String())
 
     # Relationship to observations
     observations: list["Observation"] = Relationship(back_populates="user")
@@ -69,6 +72,7 @@ class User(UserBase, table=True):
                 "user_id": "123456",
                 "username": "astro_test_user",
                 "email": "software@astrobeam.gr",
+                "auth_provider": "guest",
                 "is_active": True,
                 "created_at": "2024-01-01T12:00:00Z",
                 "updated_at": "2024-01-01T12:00:00Z",
@@ -77,7 +81,9 @@ class User(UserBase, table=True):
     }
 
     def __repr__(self) -> str:
-        return f"<User(id={self.id}, user_id='{self.user_id}', username='{self.username}', email='{self.email}')>"
+        return (
+            f"<User(id={self.id}, user_id='{self.user_id}', username='{self.username}', email='{self.email}', auth_provider='{self.auth_provider}')>"
+        )
 
 
 @event.listens_for(User, "before_update")

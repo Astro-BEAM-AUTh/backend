@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import logging
 import re
+import sys
 from datetime import UTC, datetime
 from io import StringIO
 from pathlib import Path
@@ -20,6 +22,8 @@ from backend.configs.config import settings
 
 _DATE_REVISION_PATTERN = re.compile(r"^(?P<date>\d{8})_(?P<counter>\d{4})$")
 
+logger = logging.getLogger("astro_backend")
+
 
 class _AlembicScriptLike(Protocol):
     revision: str
@@ -32,7 +36,8 @@ def _project_root() -> Path:
 
 def _build_alembic_config(stdout: TextIO | None = None) -> Config:
     root = _project_root()
-    config = Config(str(root / "alembic.ini"), stdout=stdout)
+    effective_stdout = stdout if stdout is not None else sys.stdout
+    config = Config(str(root / "alembic.ini"), stdout=effective_stdout)
     config.set_main_option("script_location", str(root / "migrations"))
     config.set_main_option("sqlalchemy.url", str(settings.database_url))
     if stdout is not None:
@@ -48,7 +53,7 @@ def _next_date_revision_id() -> str:
     max_counter = 0
     for path in versions_dir.glob("*.py"):
         prefix = path.stem.split("_", maxsplit=2)
-        if len(prefix) < 2:
+        if len(prefix) < 2:  # noqa: PLR2004
             continue
 
         candidate = f"{prefix[0]}_{prefix[1]}"
@@ -187,17 +192,17 @@ async def _create_database_if_not_exists() -> None:
                 {"database_name": db_name},
             )
             if exists:
-                print(f"Database '{db_name}' already exists.")
+                logger.info(f"Database '{db_name}' already exists.")
                 return
 
             escaped_db_name = db_name.replace('"', '""')
             await conn.execute(text(f'CREATE DATABASE "{escaped_db_name}"'))
-            print(f"Created database '{db_name}'.")
+            logger.info(f"Created database '{db_name}'.")
     finally:
         await engine.dispose()
 
 
-def main() -> None:
+def main() -> None:  # noqa: C901, PLR0911, PLR0912
     args = _parse_args()
     config = _build_alembic_config()
 
