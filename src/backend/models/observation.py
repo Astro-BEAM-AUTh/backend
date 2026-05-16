@@ -8,7 +8,7 @@ from sqlmodel._compat import SQLModelConfig
 
 from backend.models.enums.observation_status import ObservationStatus
 from backend.models.enums.observation_type import ObservationType
-from backend.models.user import User
+from backend.models.user import User, UserCreate
 from backend.utils.time_utils import utc_now
 
 
@@ -86,6 +86,13 @@ class ObservationRead(ObservationBase):
             },
         },
     }
+
+
+class ObservationSubmissionRequest(SQLModel):
+    """Payload for submitting an observation request."""
+
+    observation: ObservationCreate = Field(description="Observation submission payload")
+    requestor: UserCreate | None = Field(default=None, description="Optional guest requestor metadata")
 
 
 class Observation(ObservationBase, table=True):

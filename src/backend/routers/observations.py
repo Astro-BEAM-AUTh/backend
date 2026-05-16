@@ -8,9 +8,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
+from backend.configs.config import settings
 from backend.database import get_db
-from backend.models import Observation, ObservationCreate, ObservationRead, User, UserCreate
+from backend.models import Observation, ObservationRead, ObservationSubmissionRequest
 from backend.models.enums.observation_status import ObservationStatus
+from backend.utils.auth import (
+    AuthPrincipal,
+    get_local_user_from_principal,
+    get_optional_principal,
+    get_or_create_guest_user,
+    get_or_create_local_user_from_principal,
+)
 from backend.utils.email.service import send_observation_confirmation_email
 from backend.utils.time_utils import utc_now
 
@@ -18,6 +26,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from sqlalchemy import Result
+
+    from backend.models.user import User
 
 router = APIRouter(
     prefix="/observations",
@@ -37,17 +47,17 @@ logger = logging.getLogger("astro_backend")
     },
 )
 async def submit_observation(
-    observation: ObservationCreate,
-    requestor: UserCreate,
+    payload: ObservationSubmissionRequest,
     db: Annotated[AsyncSession, Depends(get_db)],
+    principal: Annotated[AuthPrincipal | None, Depends(get_optional_principal)],
 ) -> ObservationRead:
     """
     Submit a new telescope observation request.
 
     Args:
-        observation(ObservationCreate): Telescope observation request data
-        requestor(UserCreate): Information about the user making the request
-        db(AsyncSession): Database session
+        payload: Observation submission details, consistsing of observation parameters and optional requestor information for guest users.
+        db: Database session dependency
+        principal: Optional authenticated user information from Supabase JWT
 
     Returns:
         ObservationRead: Confirmation with observation ID and status
@@ -56,19 +66,17 @@ async def submit_observation(
         HTTPException: If submission fails
     """
     try:
-        # Get or create user
-        result = await db.execute(select(User).where(User.user_id == requestor.user_id))
-        user = result.scalar_one_or_none()
+        if principal is not None:
+            user: User = await get_or_create_local_user_from_principal(db, principal)
+        else:
+            if not payload.requestor:
+                logger.warning("Unauthorized attempt to submit observation without authentication or requestor information")
+                raise HTTPException(  # noqa: TRY301
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Authentication is required to submit an observation",
+                )
 
-        if user is None:
-            # Create new user
-            user = User(
-                user_id=requestor.user_id,
-                username=requestor.username,
-                email=requestor.email,
-            )
-            db.add(user)
-            await db.flush()  # Flush to get the user.id
+            user = await get_or_create_guest_user(db, payload.requestor)
 
         # Generate unique observation ID
         observation_id = f"obs_{utc_now().strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}"
@@ -77,17 +85,17 @@ async def submit_observation(
         db_observation = Observation(
             observation_id=observation_id,
             user_id=user.id,
-            target_name=observation.target_name,
-            observation_object=observation.observation_object,
-            ra=observation.ra,
-            dec=observation.dec,
-            center_frequency=observation.center_frequency,
-            rf_gain=observation.rf_gain,
-            if_gain=observation.if_gain,
-            bb_gain=observation.bb_gain,
-            observation_type=observation.observation_type,
-            integration_time=observation.integration_time,
-            output_filename=observation.output_filename,
+            target_name=payload.observation.target_name,
+            observation_object=payload.observation.observation_object,
+            ra=payload.observation.ra,
+            dec=payload.observation.dec,
+            center_frequency=payload.observation.center_frequency,
+            rf_gain=payload.observation.rf_gain,
+            if_gain=payload.observation.if_gain,
+            bb_gain=payload.observation.bb_gain,
+            observation_type=payload.observation.observation_type,
+            integration_time=payload.observation.integration_time,
+            output_filename=payload.observation.output_filename,
             status=ObservationStatus.PENDING,
             submitted_at=utc_now(),
         )
@@ -100,12 +108,15 @@ async def submit_observation(
         logger.info(
             "Submitted observation request: %s for target %s by user %s",
             observation_id,
-            observation.observation_object,
+            payload.observation.observation_object,
             user.username,
         )
 
         # Send confirmation email to user
+        # TODO @dyka3773: Make this a background task so we don't block the request on email sending  # noqa: FIX002
         await send_observation_confirmation_email(db_observation, user)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception("Failed to submit observation request")
         raise HTTPException(
@@ -126,20 +137,46 @@ async def submit_observation(
         status.HTTP_401_UNAUTHORIZED: {"description": "Unauthorized"},
     },
 )
-async def list_observations(db: Annotated[AsyncSession, Depends(get_db)]) -> list[ObservationRead]:
+async def list_observations(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    principal: Annotated[AuthPrincipal | None, Depends(get_optional_principal)],
+) -> list[ObservationRead]:
     """
     Get a list of all telescope observations for the authenticated user.
 
+    Args:
+        db: Database session dependency
+        principal: Optional authenticated user information from Supabase JWT
+
     Returns:
         List[ObservationRead]: List of observations
+
     Raises:
         HTTPException: If user is not authenticated
     """
-    # TODO @dyka3773: Implement actual user authentication and filter observations by user  # noqa: FIX002
-    # TODO @dyka3773: Implement pagination for observation list  # noqa: FIX002
     try:
-        observation_list: Result[tuple[Observation]] = await db.execute(select(Observation))
+        observation_query = select(Observation)
+
+        if principal is not None:
+            user = await get_local_user_from_principal(db, principal)
+            if user is None:
+                logger.error("Authenticated user not found in database")
+                raise HTTPException(  # noqa: TRY301
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Authenticated user not found",
+                )
+            observation_query = observation_query.where(Observation.user_id == user.id)
+        elif not settings.debug_allow_guest_history:
+            logger.warning("Unauthorized attempt to list observations without authentication")
+            raise HTTPException(  # noqa: TRY301
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication is required",
+            )
+
+        observation_list: Result[tuple[Observation]] = await db.execute(observation_query.order_by(Observation.submitted_at.desc()))
         observations: Sequence[Observation] = observation_list.scalars().all()
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception("Failed to list observations")
         raise HTTPException(
@@ -159,12 +196,18 @@ async def list_observations(db: Annotated[AsyncSession, Depends(get_db)]) -> lis
         status.HTTP_404_NOT_FOUND: {"description": "Observation not found"},
     },
 )
-async def get_observation(observation_id: str) -> ObservationRead:
+async def get_observation(
+    observation_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    principal: Annotated[AuthPrincipal | None, Depends(get_optional_principal)],
+) -> ObservationRead:
     """
     Get details of a specific telescope observation by ID.
 
     Args:
         observation_id: ID of the observation to retrieve
+        db: Database session dependency
+        principal: Optional authenticated user information from Supabase JWT
 
     Returns:
         ObservationRead: Details of the requested observation
@@ -172,31 +215,35 @@ async def get_observation(observation_id: str) -> ObservationRead:
     Raises:
         HTTPException: If observation not found
     """
-    # TODO @dyka3773: Implement actual retrieval logic with database  # noqa: FIX002
-    logger.warning("Not implemented: get_observation for observation_id %s", observation_id)
-    # For now, we mock the behavior
-    if not observation_id.startswith("obs_"):
+    # TODO @dyka3773: Refactor to only fetch the requested observation if the user is authenticated and it belongs to them or is made by a guest  # noqa: FIX002
+    #                 To do that we can filter using the user_id from the principal or if the user it belongs to has auth_provider='guest'
+    result = await db.execute(select(Observation).where(Observation.observation_id == observation_id))
+    observation = result.scalar_one_or_none()
+    if observation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Observation not found",
         )
-    return ObservationRead(
-        observation_id=observation_id,
-        user_id=1,
-        target_name="Mock Target",
-        observation_object="Mock Object",
-        ra=123.45,
-        dec=-54.32,
-        center_frequency=1400.0,
-        rf_gain=10.0,
-        if_gain=20.0,
-        bb_gain=30.0,
-        observation_type="imaging",
-        integration_time=60,
-        output_filename="mock_output.fits",
-        status=ObservationStatus.PENDING,
-        submitted_at=utc_now(),
-    )
+
+    if principal is not None:
+        user = await get_local_user_from_principal(db, principal)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Observation not found",
+            )
+        if observation.user_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Observation not found",
+            )
+    elif not settings.debug_allow_guest_history:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication is required",
+        )
+
+    return ObservationRead.model_validate(observation).model_dump()
 
 
 @router.delete(
@@ -208,22 +255,58 @@ async def get_observation(observation_id: str) -> ObservationRead:
         status.HTTP_404_NOT_FOUND: {"description": "Observation not found"},
     },
 )
-async def cancel_observation(observation_id: str) -> None:
+async def cancel_observation(
+    observation_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    principal: Annotated[AuthPrincipal | None, Depends(get_optional_principal)],
+) -> None:
     """
     Cancel a pending observation.
 
     Args:
         observation_id: ID of the observation to cancel
+        db: Database session dependency
+        principal: Optional authenticated user information from Supabase JWT
 
     Raises:
         HTTPException: If observation not found or cannot be cancelled
     """
-    # TODO @dyka3773: Implement actual cancellation logic with database  # noqa: FIX002
-    logger.warning("Not implemented: cancel_observation for observation_id %s", observation_id)
-    # For now, we mock the behavior
-    if not observation_id.startswith("obs_"):
+    # TODO @dyka3773: Refactor to only allow cancellation if the user is authenticated and it belongs to them or is made by a guest  # noqa: FIX002
+    #                 To do that we can filter using the user_id from the principal or if the user it belongs to has auth_provider='guest'
+    result = await db.execute(select(Observation).where(Observation.observation_id == observation_id))
+    observation = result.scalar_one_or_none()
+    if observation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Observation not found",
         )
+
+    if principal is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication is required",
+        )
+
+    user = await get_local_user_from_principal(db, principal)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Observation not found",
+        )
+
+    if observation.user_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Observation not found",
+        )
+
+    if observation.status != ObservationStatus.PENDING:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Only pending observations can be cancelled",
+        )
+
+    observation.status = ObservationStatus.CANCELLED
+    observation.completed_at = utc_now()
+    db.add(observation)
     logger.info("Cancelled observation request: %s", observation_id)
