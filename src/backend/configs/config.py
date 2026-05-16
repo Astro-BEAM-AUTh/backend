@@ -40,6 +40,10 @@ class Settings(BaseSettings):
         default="authenticated",
         description="Expected JWT audience",
     )
+    supabase_allowed_jwt_algorithms: list[str] = Field(
+        default=["RS256"],
+        description="Allowed JWT signing algorithms for Supabase token verification",
+    )
     auth_required: bool = Field(
         default=True,
         description="Require a verified Supabase JWT for protected endpoints",

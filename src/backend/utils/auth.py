@@ -98,18 +98,22 @@ def _decode_supabase_token(token: str) -> dict[str, Any]:
         msg = "Supabase issuer URL is not configured"
         raise RuntimeError(msg)
 
-    # Get the algorithm from the JWT header
+    # Get and validate the algorithm from the JWT header
     header = jwt.get_unverified_header(token)
     algorithm = header.get("alg")
     if not algorithm:
         msg = "JWT header missing algorithm"
+        raise ValueError(msg)
+    allowed_algorithms = settings.supabase_allowed_jwt_algorithms
+    if algorithm not in allowed_algorithms:
+        msg = f"JWT uses unsupported algorithm: {algorithm}"
         raise ValueError(msg)
 
     signing_key = _jwks_client().get_signing_key_from_jwt(token)
     return jwt.decode(
         token,
         signing_key.key,
-        algorithms=[algorithm],
+        algorithms=allowed_algorithms,
         audience=settings.supabase_audience,
         issuer=issuer,
         options={"require": ["exp", "iat", "sub"]},
