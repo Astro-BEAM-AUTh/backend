@@ -6,6 +6,7 @@ import argparse
 import asyncio
 import logging
 import re
+import sys
 from datetime import UTC, datetime
 from io import StringIO
 from pathlib import Path
@@ -35,7 +36,8 @@ def _project_root() -> Path:
 
 def _build_alembic_config(stdout: TextIO | None = None) -> Config:
     root = _project_root()
-    config = Config(str(root / "alembic.ini"), stdout=stdout)
+    effective_stdout = stdout if stdout is not None else sys.stdout
+    config = Config(str(root / "alembic.ini"), stdout=effective_stdout)
     config.set_main_option("script_location", str(root / "migrations"))
     config.set_main_option("sqlalchemy.url", str(settings.database_url))
     if stdout is not None:
