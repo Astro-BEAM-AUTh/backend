@@ -15,7 +15,7 @@ from backend.configs.config import settings
 from backend.configs.custom_logging import setup_logger
 from backend.database import close_database_connection, initialize_database_connection
 from backend.models import StatusResponse
-from backend.routers import telescope, web
+from backend.routers import observations, web
 
 logger = setup_logger("astro_backend")
 
@@ -70,7 +70,7 @@ app.add_middleware(
 )
 
 app.include_router(
-    telescope.router,
+    observations.router,
     prefix="/v1",
 )
 app.include_router(

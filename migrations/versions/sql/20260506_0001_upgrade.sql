@@ -1,4 +1,4 @@
--- Upgrade SQL for revision 20260505_0001
+-- Upgrade SQL for revision 20260506_0001
 
 BEGIN;
 
@@ -7,7 +7,7 @@ CREATE TABLE alembic_version (
     CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num)
 );
 
--- Running upgrade  -> 20260505_0001
+-- Running upgrade  -> 20260506_0001
 
 CREATE TYPE observationstatus AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'FAILED', 'CANCELLED');
 
@@ -58,7 +58,7 @@ CREATE TABLE observations (
 
 CREATE UNIQUE INDEX ix_observations_observation_id ON observations (observation_id);
 
-INSERT INTO alembic_version (version_num) VALUES ('20260505_0001') RETURNING alembic_version.version_num;
+INSERT INTO alembic_version (version_num) VALUES ('20260506_0001') RETURNING alembic_version.version_num;
 
 COMMIT;
 

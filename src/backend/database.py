@@ -33,6 +33,10 @@ def initialize_database_connection() -> None:
         autoflush=False,
     )
 
+    if engine is None or async_session_maker is None:
+        msg = "Failed to initialize database connection"
+        raise RuntimeError(msg)
+
 
 async def close_database_connection() -> None:
     """Close database connection."""

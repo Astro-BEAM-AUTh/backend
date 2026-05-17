@@ -31,6 +31,20 @@ class Settings(BaseSettings):
     )
     db_echo: bool = Field(default=True, description="Echo SQL queries")  # Only for DEV
 
+    # Supabase authentication settings
+    supabase_url: str = Field(
+        default="",
+        description="Supabase project URL, for example https://<project-ref>.supabase.co",
+    )
+    supabase_audience: str = Field(
+        default="authenticated",
+        description="Expected JWT audience",
+    )
+    debug_allow_guest_history: bool = Field(
+        default=False,
+        description="Allow guest observation history access in debug mode",
+    )
+
     # Email settings
     smtp_server: str = Field(
         default="smtp.gmail.com",
@@ -76,6 +90,23 @@ class Settings(BaseSettings):
         default=["*"],
         description="Allowed CORS headers",
     )
+
+    @property
+    def supabase_issuer_url(self) -> str:
+        """Return the expected JWT issuer URL."""
+        if not self.supabase_url:
+            return ""
+
+        return f"{self.supabase_url.rstrip('/')}/auth/v1"
+
+    @property
+    def supabase_jwks_endpoint(self) -> str:
+        """Return the JWKS endpoint used for token verification."""
+        issuer = self.supabase_issuer_url
+        if not issuer:
+            return ""
+
+        return f"{issuer}/.well-known/jwks.json"
 
 
 # Global settings instance

@@ -1,8 +1,8 @@
-"""initial database creation
+"""initial db
 
-Revision ID: 20260505_0001
+Revision ID: 20260506_0001
 Revises: 
-Create Date: 2026-05-05 23:44:39.182958
+Create Date: 2026-05-06 20:54:44.279587
 """
 from collections.abc import Sequence
 
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '20260505_0001'
+revision: str = '20260506_0001'
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None

@@ -9,6 +9,7 @@
 ## Table of Contents
 - [Overview](#overview)
 - [How to Run](#how-to-run)
+- [Supabase Auth Setup](#supabase-auth-setup)
 - [Database Management](#database-management)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -27,6 +28,16 @@ To run the backend, execute the following command:
 ```bash
 uv run backend
 ```
+
+## Supabase Auth Setup
+Configure backend authentication through environment variables (see `.env.example`).
+
+Required values:
+- `SUPABASE_URL`: Supabase project URL (`https://<project-ref>.supabase.co`)
+- `SUPABASE_AUDIENCE`: expected JWT audience (default `authenticated`)
+
+Auth policy values:
+- `DEBUG_ALLOW_GUEST_HISTORY`: temporary debug-only guest history flag; keep `False` in production
 
 ## Database Management
 Database lifecycle is managed from this project using Alembic migrations.
