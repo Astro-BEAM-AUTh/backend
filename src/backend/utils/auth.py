@@ -106,11 +106,11 @@ def _decode_supabase_token(token: str) -> dict[str, Any]:
         msg = "JWT header missing algorithm"
         raise ValueError(msg)
 
-    signing_key = _jwks_client().get_signing_key_from_jwt(token)
+    signing_key: jwt.PyJWK = _jwks_client().get_signing_key_from_jwt(token)
     return jwt.decode(
         token,
         signing_key.key,
-        algorithms=[algorithm],
+        algorithms=[signing_key.algorithm_name],
         audience=settings.supabase_audience,
         issuer=issuer,
         options={"require": ["exp", "iat", "sub"]},
@@ -220,34 +220,9 @@ async def create_local_user(db: AsyncSession, requestor: UserCreate) -> User:
         User: The created local user
     """
     user = User(**requestor.model_dump())
-    try:
-        db.add(user)
-        await db.flush()
-    except IntegrityError as exc:
-        logger.warning("User creation failed due to integrity error: %s", exc)
-        await db.rollback()
-        existing_user = await get_local_user_by_email(db, requestor.email)
-        if existing_user is not None:
-            return existing_user
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="A user with this email already exists",
-        ) from exc
+    db.add(user)
+    await db.flush()
     return user
-
-
-async def get_local_user_from_principal(db: AsyncSession, principal: AuthPrincipal) -> User | None:
-    """
-    Look up local user for a verified Supabase principal.
-
-    Args:
-        db: Database session dependency
-        principal: The verified Supabase principal
-
-    Returns:
-        User | None: The local user if found, otherwise None
-    """
-    return await get_local_user_by_user_id(db, principal.subject)
 
 
 async def get_or_create_local_user_from_principal(db: AsyncSession, principal: AuthPrincipal) -> User:
@@ -261,11 +236,24 @@ async def get_or_create_local_user_from_principal(db: AsyncSession, principal: A
     Returns:
         User: The local user
     """
-    existing_user = await get_local_user_from_principal(db, principal)
+    existing_user = await get_local_user_by_user_id(db, principal.subject)
     if existing_user is not None:
         return existing_user
 
-    return await create_local_user(db, build_user_from_principal(principal))
+    try:
+        return await create_local_user(db, build_user_from_principal(principal))
+    except IntegrityError as exc:
+        logger.warning("User creation failed due to integrity error: %s", exc)
+        logger.info("Attempting to update existing user with matching email")
+        await db.rollback()
+        existing_user = await get_local_user_by_email(db, principal.email)
+        if existing_user is not None:
+            existing_user.user_id = principal.subject
+            existing_user.username = principal.username
+            existing_user.auth_provider = principal.provider
+            db.add(existing_user)
+            await db.flush()
+            return existing_user
 
 
 async def get_or_create_guest_user(db: AsyncSession, requestor: UserCreate) -> User:
@@ -284,4 +272,15 @@ async def get_or_create_guest_user(db: AsyncSession, requestor: UserCreate) -> U
     if existing_user is not None:
         return existing_user
 
-    return await create_local_user(db, guest_user)
+    try:
+        return await create_local_user(db, guest_user)
+    except IntegrityError as exc:
+        logger.warning("User creation failed due to integrity error: %s", exc)
+        await db.rollback()
+        existing_user = await get_local_user_by_email(db, requestor.email)
+        if existing_user is not None:
+            return existing_user
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A user with this email already exists",
+        ) from exc

@@ -14,7 +14,6 @@ from backend.models import Observation, ObservationRead, ObservationSubmissionRe
 from backend.models.enums.observation_status import ObservationStatus
 from backend.utils.auth import (
     AuthPrincipal,
-    get_local_user_from_principal,
     get_optional_principal,
     get_or_create_guest_user,
     get_or_create_local_user_from_principal,
@@ -55,7 +54,7 @@ async def submit_observation(
     Submit a new telescope observation request.
 
     Args:
-        payload: Observation submission details, consistsing of observation parameters and optional requestor information for guest users.
+        payload: Observation submission details, consisting of observation parameters and optional requestor information for guest users.
         db: Database session dependency
         principal: Optional authenticated user information from Supabase JWT
 
@@ -158,13 +157,7 @@ async def list_observations(
         observation_query = select(Observation)
 
         if principal is not None:
-            user = await get_local_user_from_principal(db, principal)
-            if user is None:
-                logger.error("Authenticated user not found in database")
-                raise HTTPException(  # noqa: TRY301
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Authenticated user not found",
-                )
+            user = await get_or_create_local_user_from_principal(db, principal)
             observation_query = observation_query.where(Observation.user_id == user.id)
         elif not settings.debug_allow_guest_history:
             logger.warning("Unauthorized attempt to list observations without authentication")
@@ -226,12 +219,7 @@ async def get_observation(
         )
 
     if principal is not None:
-        user = await get_local_user_from_principal(db, principal)
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Observation not found",
-            )
+        user = await get_or_create_local_user_from_principal(db, principal)
         if observation.user_id != user.id:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -287,12 +275,7 @@ async def cancel_observation(
             detail="Authentication is required",
         )
 
-    user = await get_local_user_from_principal(db, principal)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Observation not found",
-        )
+    user = await get_or_create_local_user_from_principal(db, principal)
 
     if observation.user_id != user.id:
         raise HTTPException(
