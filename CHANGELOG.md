@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.7.0 (2026-05-17)
+
+### Bug Fixes
+
+- Add Copilot suggestions
+  ([`96c235a`](https://github.com/Astro-BEAM-AUTh/backend/commit/96c235ade79b744045bd2fa39ca5b23e2eabab20))
+
+- Add copilot suggestions from #45
+  ([`6e375a4`](https://github.com/Astro-BEAM-AUTh/backend/commit/6e375a499d74e0453d7ae3a44cf8bbc5b609132f))
+
+- Guest users can now send requests to emails already existing
+  ([`5f96bd6`](https://github.com/Astro-BEAM-AUTh/backend/commit/5f96bd696b18575107cf6d364cf7f0e7771ac032))
+
+- Normalize existing database string values when migrating to the newest version
+  ([`5755ef8`](https://github.com/Astro-BEAM-AUTh/backend/commit/5755ef8946f189ea95587deb6dbf4a2c1b1cad70))
+
+- **alembic**: Terminal commands for `current` and `history` now work as expected
+  ([`4bd00df`](https://github.com/Astro-BEAM-AUTh/backend/commit/4bd00df381e247f076a035a18f1fb295e2a27cff))
+
+- **auth**: Whitelist JWT algorithms for Supabase token verification
+  ([`4d63449`](https://github.com/Astro-BEAM-AUTh/backend/commit/4d63449401bb5c34cb51999756125dae9906573b))
+
+### Chores
+
+- Migrate project to supabase and thus reinstantiate the initialization scripts just to be safe
+  ([`9c3f228`](https://github.com/Astro-BEAM-AUTh/backend/commit/9c3f2283407a5aa44df5ed884cfc0e06478c1a08))
+
+### Deps
+
+- Bump the uv-dependencies group with 4 updates
+  ([`2722848`](https://github.com/Astro-BEAM-AUTh/backend/commit/2722848ea815c4ddeb9cc92e885d7e06c92370b4))
+
+### Features
+
+- Add endpoints to get all observations and delete a specific one
+  ([`a41838a`](https://github.com/Astro-BEAM-AUTh/backend/commit/a41838a9031af28aa3ecff78214b8759412034b7))
+
+- Make the observation type an Enum
+  ([`bb080e8`](https://github.com/Astro-BEAM-AUTh/backend/commit/bb080e84ef65c06566a775ba7353068ea9580576))
+
+- **JWT**: Add support for JWT authentication
+  ([`02349e6`](https://github.com/Astro-BEAM-AUTh/backend/commit/02349e66911db02d63dab947646740a921e26045))
+
+### Refactoring
+
+- **auth**: Decode JWT with validated header algorithm only
+  ([`2d5c34e`](https://github.com/Astro-BEAM-AUTh/backend/commit/2d5c34e2a070200a5817f53d65401ad437b9a517))
+
+
 ## v0.6.0 (2026-05-05)
 
 ### Bug Fixes
