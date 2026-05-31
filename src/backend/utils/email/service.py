@@ -2,7 +2,7 @@
 
 import logging
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from typing import TYPE_CHECKING
 
 import aiosmtplib
 
@@ -11,6 +11,9 @@ from backend.models.observation import Observation
 from backend.models.user import User
 from backend.utils.email.templates.html import create_html_email_body_for_completion, create_html_email_body_for_confirmation
 from backend.utils.email.templates.text import create_text_email_body_for_completion, create_text_email_body_for_confirmation
+
+if TYPE_CHECKING:
+    from email.mime.text import MIMEText
 
 logger = logging.getLogger("astro_backend")
 
