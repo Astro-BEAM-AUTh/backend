@@ -154,9 +154,9 @@ def create_html_email_body_for_confirmation(observation: Observation, user: User
 def create_html_email_body_for_completion(observation: Observation, user: User) -> MIMEText:
     """Create HTML email body for observation completion."""
     if observation.completed_on is None:
-        msg = "Cannot create completion email for observation without completed_at timestamp"
+        msg = "Cannot create completion email for observation without completed_on timestamp"
         raise ValueError(msg)
-    duration = (observation.completed_on - observation.submitted_at).total_seconds() / 3600 if observation.completed_on else 0
+    duration = (observation.completed_on - observation.created_on).total_seconds() / 3600 if observation.completed_on else 0
 
     return MIMEText(
         f"""

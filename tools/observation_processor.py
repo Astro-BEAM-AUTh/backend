@@ -20,7 +20,7 @@ async def claim_next_pending_observation() -> Observation | None:
     """Fetch and claim one pending observation for processing."""
     async with get_db_session() as session:
         result = await session.exec(
-            select(Observation).where(Observation.status == ObservationStatusEnum.PENDING).order_by(Observation.submitted_at.asc()).limit(1),
+            select(Observation).where(Observation.status == ObservationStatusEnum.PENDING).order_by(Observation.created_on.asc()).limit(1),
         )
         observation = result.first()
 
@@ -30,7 +30,7 @@ async def claim_next_pending_observation() -> Observation | None:
         observation.status = ObservationStatusEnum.IN_PROGRESS
         observation.updated_on = utc_now()
 
-        logger.info("Claimed observation %s for processing", observation.observation_id)
+        logger.info("Claimed observation %s for processing", observation.id)
 
         await session.flush()
         await session.refresh(observation)
@@ -68,14 +68,14 @@ async def process_observation(observation: Observation) -> None:
     """Simulate processing of an observation using a fixed delay."""
     logger.info(
         "Processing observation %s (%s)",
-        observation.observation_id,
+        observation.id,
         observation.target_name,
     )
 
     await asyncio.sleep(PROCESS_DELAY_SECONDS)
     await mark_observation_completed(observation.id)
 
-    logger.info("Completed observation %s", observation.observation_id)
+    logger.info("Completed observation %s", observation.id)
 
 
 async def run_processor() -> None:
@@ -99,7 +99,7 @@ async def run_processor() -> None:
             try:
                 await process_observation(observation)
             except Exception:
-                logger.exception("Observation processing failed for %s", observation.observation_id)
+                logger.exception("Observation processing failed for %s", observation.id)
                 await mark_observation_failed(observation.id)
     finally:
         await close_database_connection()
