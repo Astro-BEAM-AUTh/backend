@@ -94,7 +94,7 @@ async def submit_observation(
             observation_type=payload.observation.observation_type,
             fft_size=payload.observation.fft_size,
             integration_time=payload.observation.integration_time,
-            planned_start=payload.observation.planned_start,
+            planned_start=payload.observation.planned_start.replace(tzinfo=None) if payload.observation.planned_start else None,
             output_filename=payload.observation.output_filename,
             receive_csv=payload.observation.receive_csv,
             perform_data_analysis=payload.observation.perform_data_analysis,
