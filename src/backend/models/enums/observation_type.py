@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class ObservationType(StrEnum):
+class ObservationTypeEnum(StrEnum):
     """Enumeration for the type of an observation."""
 
     HOT_CALIBRATION = "HOT_CALIBRATION"

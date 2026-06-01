@@ -11,7 +11,7 @@ from sqlmodel import select
 from backend.configs.config import settings
 from backend.database import get_db
 from backend.models import Observation, ObservationRead, ObservationSubmissionRequest
-from backend.models.enums.observation_status import ObservationStatus
+from backend.models.enums.observation_status import ObservationStatusEnum
 from backend.utils.auth import (
     AuthPrincipal,
     get_optional_principal,
@@ -77,26 +77,30 @@ async def submit_observation(
 
             user = await get_or_create_guest_user(db, payload.requestor)
 
+        curr_timestamp = utc_now()
+
         # Generate unique observation ID
-        observation_id = f"obs_{utc_now().strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}"
+        observation_id = f"obs_{curr_timestamp.strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}"
 
         # Create observation record
         db_observation = Observation(
-            observation_id=observation_id,
             user_id=user.id,
-            target_name=payload.observation.target_name,
-            observation_object=payload.observation.observation_object,
+            target_name=payload.observation.target_name or observation_id,
             ra=payload.observation.ra,
             dec=payload.observation.dec,
+            bandwidth=payload.observation.bandwidth,
             center_frequency=payload.observation.center_frequency,
-            rf_gain=payload.observation.rf_gain,
-            if_gain=payload.observation.if_gain,
-            bb_gain=payload.observation.bb_gain,
+            velocity_frame=payload.observation.velocity_frame,
             observation_type=payload.observation.observation_type,
+            fft_size=payload.observation.fft_size,
             integration_time=payload.observation.integration_time,
+            planned_start=payload.observation.planned_start,
             output_filename=payload.observation.output_filename,
-            status=ObservationStatus.PENDING,
-            submitted_at=utc_now(),
+            receive_csv=payload.observation.receive_csv,
+            perform_data_analysis=payload.observation.perform_data_analysis,
+            status=ObservationStatusEnum.PENDING,
+            created_on=curr_timestamp,
+            updated_on=curr_timestamp,
         )
 
         # Persist observation in database
@@ -107,7 +111,7 @@ async def submit_observation(
         logger.info(
             "Submitted observation request: %s for target %s by user %s",
             observation_id,
-            payload.observation.observation_object,
+            payload.observation.target_name,
             user.username,
         )
 
@@ -166,7 +170,7 @@ async def list_observations(
                 detail="Authentication is required",
             )
 
-        observation_list: Result[tuple[Observation]] = await db.execute(observation_query.order_by(Observation.submitted_at.desc()))
+        observation_list: Result[tuple[Observation]] = await db.execute(observation_query.order_by(Observation.created_on.desc()))
         observations: Sequence[Observation] = observation_list.scalars().all()
     except HTTPException:
         raise
@@ -190,7 +194,7 @@ async def list_observations(
     },
 )
 async def get_observation(
-    observation_id: str,
+    observation_id: int,
     db: Annotated[AsyncSession, Depends(get_db)],
     principal: Annotated[AuthPrincipal | None, Depends(get_optional_principal)],
 ) -> ObservationRead:
@@ -210,7 +214,7 @@ async def get_observation(
     """
     # TODO @dyka3773: Refactor to only fetch the requested observation if the user is authenticated and it belongs to them or is made by a guest  # noqa: FIX002
     #                 To do that we can filter using the user_id from the principal or if the user it belongs to has auth_provider='guest'
-    result = await db.execute(select(Observation).where(Observation.observation_id == observation_id))
+    result = await db.execute(select(Observation).where(Observation.id == observation_id))
     observation = result.scalar_one_or_none()
     if observation is None:
         raise HTTPException(
@@ -244,7 +248,7 @@ async def get_observation(
     },
 )
 async def cancel_observation(
-    observation_id: str,
+    observation_id: int,
     db: Annotated[AsyncSession, Depends(get_db)],
     principal: Annotated[AuthPrincipal | None, Depends(get_optional_principal)],
 ) -> None:
@@ -261,7 +265,7 @@ async def cancel_observation(
     """
     # TODO @dyka3773: Refactor to only allow cancellation if the user is authenticated and it belongs to them or is made by a guest  # noqa: FIX002
     #                 To do that we can filter using the user_id from the principal or if the user it belongs to has auth_provider='guest'
-    result = await db.execute(select(Observation).where(Observation.observation_id == observation_id))
+    result = await db.execute(select(Observation).where(Observation.id == observation_id))
     observation = result.scalar_one_or_none()
     if observation is None:
         raise HTTPException(
@@ -283,14 +287,14 @@ async def cancel_observation(
             detail="Observation not found",
         )
 
-    if observation.status != ObservationStatus.PENDING:
+    if observation.status != ObservationStatusEnum.PENDING:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Only pending observations can be cancelled",
         )
 
-    observation.status = ObservationStatus.CANCELLED
-    observation.completed_at = utc_now()
+    observation.status = ObservationStatusEnum.CANCELLED
+    observation.completed_on = utc_now()
     db.add(observation)
     await db.commit()
     logger.info("Cancelled observation request: %s", observation_id)

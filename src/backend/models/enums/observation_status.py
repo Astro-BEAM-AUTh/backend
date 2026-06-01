@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class ObservationStatus(StrEnum):
+class ObservationStatusEnum(StrEnum):
     """Enumeration for the status of an observation."""
 
     PENDING = "PENDING"

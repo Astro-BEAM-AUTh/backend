@@ -33,7 +33,7 @@ async def send_observation_confirmation_email(observation: Observation, user: Us
         # Create message
         message = MIMEMultipart("alternative")
         message["To"] = user.email
-        message["Subject"] = f"Observation Request Confirmed: {observation.observation_id}"
+        message["Subject"] = f"Observation Request Confirmed: {observation.id}"
 
         # Create email body
         text_body: MIMEText = create_text_email_body_for_confirmation(observation, user)
@@ -48,13 +48,13 @@ async def send_observation_confirmation_email(observation: Observation, user: Us
         logger.info(
             "Sent confirmation email to %s for observation %s",
             user.email,
-            observation.observation_id,
+            observation.id,
         )
     except Exception:
         logger.exception(
             "Failed to send confirmation email to %s for observation %s",
             user.email,
-            observation.observation_id,
+            observation.id,
         )
         # Don't raise - we don't want email failures to fail the observation submission
         # The observation is already saved, so we just log the error
@@ -75,7 +75,7 @@ async def send_observation_completion_email(observation: Observation, user: User
         # Create message
         message = MIMEMultipart("alternative")
         message["To"] = user.email
-        message["Subject"] = f"Observation Completed: {observation.observation_id}"
+        message["Subject"] = f"Observation Completed: {observation.id}"
 
         # Create email body
         text_body: MIMEText = create_text_email_body_for_completion(observation, user)
@@ -90,13 +90,13 @@ async def send_observation_completion_email(observation: Observation, user: User
         logger.info(
             "Sent completion email to %s for observation %s",
             user.email,
-            observation.observation_id,
+            observation.id,
         )
     except Exception:
         logger.exception(
             "Failed to send completion email to %s for observation %s",
             user.email,
-            observation.observation_id,
+            observation.id,
         )
         # Don't raise - we don't want email failures to fail the observation update
 
