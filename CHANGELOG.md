@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.8.0 (2026-06-14)
+
+### Bug Fixes
+
+- Correct renaming of variables
+  ([`b0e07f3`](https://github.com/Astro-BEAM-AUTh/backend/commit/b0e07f37f8ed01e371478477e1641b46d7a9ed08))
+
+- Parse planned start to be UTC only
+  ([`2ea4ed1`](https://github.com/Astro-BEAM-AUTh/backend/commit/2ea4ed1bc9250f4815dbcb41a354caf2abb85f55))
+
+### Code Style
+
+- Move an import into a type checking block
+  ([`8b8d49b`](https://github.com/Astro-BEAM-AUTh/backend/commit/8b8d49b943c98398989afc78b05137496b145f8f))
+
+### Deps
+
+- Bump the uv-dependencies group across 1 directory with 7 updates
+  ([`c1c1aa0`](https://github.com/Astro-BEAM-AUTh/backend/commit/c1c1aa0b33ad209f121196d867319bd9c879d7cf))
+
+- Bump the uv-dependencies group with 3 updates
+  ([`3eeb582`](https://github.com/Astro-BEAM-AUTh/backend/commit/3eeb582e43f5b2cab0744c1a8ee99ced08834612))
+
+- Bump the uv-dependencies group with 3 updates
+  ([`7db48d7`](https://github.com/Astro-BEAM-AUTh/backend/commit/7db48d72a52344f454cbe383e13748f76e58b682))
+
+### Features
+
+- Update Observation model and create a more abstract way for email templating
+  ([`ce3d1e6`](https://github.com/Astro-BEAM-AUTh/backend/commit/ce3d1e6edd1f70a94b234b693fa7fee744c0135e))
+
+
 ## v0.7.0 (2026-05-17)
 
 ### Bug Fixes
