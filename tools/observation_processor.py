@@ -7,7 +7,7 @@ from sqlmodel import select
 from backend.configs.custom_logging import setup_logger
 from backend.database import close_database_connection, get_db_session, initialize_database_connection
 from backend.models import Observation
-from backend.models.enums.observation_status import ObservationStatus
+from backend.models.enums.observation_status import ObservationStatusEnum
 from backend.utils.time_utils import utc_now
 
 PROCESS_DELAY_SECONDS = 5
@@ -20,17 +20,17 @@ async def claim_next_pending_observation() -> Observation | None:
     """Fetch and claim one pending observation for processing."""
     async with get_db_session() as session:
         result = await session.exec(
-            select(Observation).where(Observation.status == ObservationStatus.PENDING).order_by(Observation.submitted_at.asc()).limit(1),
+            select(Observation).where(Observation.status == ObservationStatusEnum.PENDING).order_by(Observation.created_on.asc()).limit(1),
         )
         observation = result.first()
 
         if observation is None:
             return None
 
-        observation.status = ObservationStatus.IN_PROGRESS
-        observation.updated_at = utc_now()
+        observation.status = ObservationStatusEnum.IN_PROGRESS
+        observation.updated_on = utc_now()
 
-        logger.info("Claimed observation %s for processing", observation.observation_id)
+        logger.info("Claimed observation %s for processing", observation.id)
 
         await session.flush()
         await session.refresh(observation)
@@ -45,9 +45,9 @@ async def mark_observation_completed(observation_id: int) -> None:
             logger.warning("Observation with database id %s no longer exists", observation_id)
             return
 
-        observation.status = ObservationStatus.COMPLETED
-        observation.completed_at = utc_now()
-        observation.updated_at = utc_now()
+        observation.status = ObservationStatusEnum.COMPLETED
+        observation.completed_on = utc_now()
+        observation.updated_on = utc_now()
 
         logger.info("Marked observation %s as completed", observation_id)
 
@@ -60,22 +60,22 @@ async def mark_observation_failed(observation_id: int) -> None:
             logger.warning("Observation with database id %s no longer exists", observation_id)
             return
 
-        observation.status = ObservationStatus.FAILED
-        observation.updated_at = utc_now()
+        observation.status = ObservationStatusEnum.FAILED
+        observation.updated_on = utc_now()
 
 
 async def process_observation(observation: Observation) -> None:
     """Simulate processing of an observation using a fixed delay."""
     logger.info(
         "Processing observation %s (%s)",
-        observation.observation_id,
+        observation.id,
         observation.target_name,
     )
 
     await asyncio.sleep(PROCESS_DELAY_SECONDS)
     await mark_observation_completed(observation.id)
 
-    logger.info("Completed observation %s", observation.observation_id)
+    logger.info("Completed observation %s", observation.id)
 
 
 async def run_processor() -> None:
@@ -99,7 +99,7 @@ async def run_processor() -> None:
             try:
                 await process_observation(observation)
             except Exception:
-                logger.exception("Observation processing failed for %s", observation.observation_id)
+                logger.exception("Observation processing failed for %s", observation.id)
                 await mark_observation_failed(observation.id)
     finally:
         await close_database_connection()

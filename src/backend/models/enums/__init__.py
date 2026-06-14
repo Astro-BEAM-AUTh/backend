@@ -1,9 +1,14 @@
 """Enumerators needed across the application."""
 
-from .observation_status import ObservationStatus
-from .observation_type import ObservationType
+from .frequencies import BandwidthEnum, CentralFrequencyEnum
+from .observation_status import ObservationStatusEnum
+from .observation_type import ObservationTypeEnum
+from .reference_frame import ReferenceFrameEnum
 
 __all__ = [
-    "ObservationStatus",
-    "ObservationType",
+    "BandwidthEnum",
+    "CentralFrequencyEnum",
+    "ObservationStatusEnum",
+    "ObservationTypeEnum",
+    "ReferenceFrameEnum",
 ]
