@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.8.1 (2026-06-28)
+
+### Continuous Integration
+
+- Change the on-push job to be able to automatically release docker images when needed
+  ([`57e483e`](https://github.com/Astro-BEAM-AUTh/backend/commit/57e483e106d16c399ab8a903da33e2526e3d0c17))
+
+### Deps
+
+- Bump the uv-dependencies group with 2 updates
+  ([`c54f344`](https://github.com/Astro-BEAM-AUTh/backend/commit/c54f34426bae05c1fe363724e00e440d88413adb))
+
+- Bump the uv-dependencies group with 5 updates
+  ([`4126816`](https://github.com/Astro-BEAM-AUTh/backend/commit/41268167a3482e70a469438ef1e0af26aecb874c))
+
+
 ## v0.8.0 (2026-06-14)
 
 ### Bug Fixes
