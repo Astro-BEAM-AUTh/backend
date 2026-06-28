@@ -3,10 +3,19 @@ on:
     push:
         branches: [ main ]
     workflow_dispatch:
+        inputs:
+            redeploy:
+                description: Force build and deploy even when there is no new release
+                required: false
+                type: boolean
+                default: false
 
 jobs:
     call-semantic-release:
         uses: Astro-BEAM-AUTh/infrastructure/.github/workflows/semantic-release.yml@main
+        with:
+            redeploy: ${{ github.event_name == 'workflow_dispatch' && inputs.redeploy || false }}
+        secrets: inherit
         permissions:
             contents: write
             packages: write
