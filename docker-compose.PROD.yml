@@ -1,0 +1,19 @@
+services:
+  app:
+    image: ghcr.io/astro-beam-auth/backend:latest
+    container_name: astro-backend
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  watchtower:
+    image: nickfedor/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_API_VERSION=1.44
+      - WATCHTOWER_POLL_INTERVAL=300
+      - WATCHTOWER_CLEANUP=true
+    # Only watch the app container, not watchtower itself
+    command: astro-backend
+    restart: unless-stopped
