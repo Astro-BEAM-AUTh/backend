@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.8.2 (2026-07-09)
+
+### Continuous Integration
+
+- Create docker compose to autodeploy upon release
+  ([`e076210`](https://github.com/Astro-BEAM-AUTh/backend/commit/e076210856389511a91629b1bb61861101cb48cd))
+
+- **auto deployment**: Make the container find the environment variables
+  ([`043d156`](https://github.com/Astro-BEAM-AUTh/backend/commit/043d156a754b09bdd018f8bb58266737212009b3))
+
+### Deps
+
+- Bump the uv-dependencies group with 4 updates
+  ([`1f23085`](https://github.com/Astro-BEAM-AUTh/backend/commit/1f230856bd27f16fb8cff8eefc01cfbe4ccafde6))
+
+- Bump the uv-dependencies group with 5 updates
+  ([`66089f7`](https://github.com/Astro-BEAM-AUTh/backend/commit/66089f7526a7f673a8b4bb97b1701d4dbb019a5f))
+
+
 ## v0.8.1 (2026-06-28)
 
 ### Continuous Integration
