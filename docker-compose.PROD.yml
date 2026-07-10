@@ -18,11 +18,12 @@ services:
     container_name: astro-backend-watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${WATCHTOWER_DOCKER_CONFIG:-/home/pi/.docker/config.json}:/config.json:ro
+      - ${WATCHTOWER_DOCKER_CONFIG_DIR:-/home/pi/.docker}:/config:ro
     environment:
+      - DOCKER_CONFIG=/config
       - WATCHTOWER_POLL_INTERVAL=300
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_SCOPE=astro-backend
-    command: --scope astro-backend --rolling-restart --registry-auth
+    command: --scope astro-backend --rolling-restart --update-on-start
     restart: unless-stopped
