@@ -1,7 +1,12 @@
+name: astro-backend-prod
+
 services:
   app:
     image: ghcr.io/astro-beam-auth/backend:latest
     container_name: astro-backend
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.scope=astro-backend
     env_file:
       - .env
     ports:
@@ -9,13 +14,15 @@ services:
     restart: unless-stopped
 
   watchtower:
-    image: nickfedor/watchtower
+    image: nickfedor/watchtower:latest
+    container_name: astro-backend-watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ${WATCHTOWER_DOCKER_CONFIG:-/home/pi/.docker/config.json}:/config.json:ro
     environment:
-      - DOCKER_API_VERSION=1.44
       - WATCHTOWER_POLL_INTERVAL=300
       - WATCHTOWER_CLEANUP=true
-    # Only watch the app container, not watchtower itself
-    command: astro-backend
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_SCOPE=astro-backend
+    command: --scope astro-backend --rolling-restart --registry-auth
     restart: unless-stopped
