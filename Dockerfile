@@ -5,6 +5,12 @@ WORKDIR /app
 
 COPY . /app
 
+# Ensure TLS trust store is present for outbound HTTPS requests.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen
 
