@@ -17,7 +17,7 @@ dependencies = [
     "pydantic-settings==2.14.2",
     "python-dotenv==1.2.2",
     "sqlalchemy==2.0.51",
-    "uvicorn==0.50.1",
+    "uvicorn==0.51.0",
     "uvloop==0.22.1 ; sys_platform != 'win32'",
     "sqlmodel==0.0.39",
     "alembic-postgresql-enum>=1.10.0",
@@ -29,13 +29,13 @@ backend-db = "backend.db_manage:main"
 # observation-processor -> uv run tools\observation_processor.py
 
 [build-system]
-requires = ["uv_build>=0.11.26,<0.12.0"]
+requires = ["uv_build>=0.11.28,<0.12.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
     "python-semantic-release>=10.6.1",
-    "tox==4.56.1",
+    "tox==4.56.4",
 ]
 
 [tool.semantic_release]
