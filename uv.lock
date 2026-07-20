@@ -117,7 +117,7 @@ requires-dist = [
     { name = "alembic", specifier = "==1.18.5" },
     { name = "alembic-postgresql-enum", specifier = ">=1.10.0" },
     { name = "asyncpg", specifier = "==0.31.0" },
-    { name = "fastapi", specifier = "==0.139.0" },
+    { name = "fastapi", specifier = "==0.139.2" },
     { name = "pydantic", extras = ["email"], specifier = "==2.13.4" },
     { name = "pydantic-settings", specifier = "==2.14.2" },
     { name = "pyjwt", extras = ["crypto"], specifier = "==2.10.1" },
@@ -131,7 +131,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "python-semantic-release", specifier = ">=10.6.1" },
-    { name = "tox", specifier = "==4.56.4" },
+    { name = "tox", specifier = "==4.57.0" },
 ]
 
 [[package]]
@@ -326,7 +326,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.139.0"
+version = "0.139.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -335,9 +335,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "typing-inspection" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d3/af/a5f50ccfa659ec1802cb4ca842c23f06d906a8cc9aef6016a2caeea3d4ed/fastapi-0.139.0.tar.gz", hash = "sha256:99ab7b2d92223c76d6cf10757ab3f89d45b38267fc20b2a136cf02f6beac3145", size = 423016, upload-time = "2026-07-01T16:35:33.436Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/95/d3f0ae10836324a2eab98a52b61210ac609f08200bf4bb0dc8132d32f78a/fastapi-0.139.2.tar.gz", hash = "sha256:333145a6891e9b5b3cfceb69baf817e8240cde4d4588ae5a10bf56ffacb6255e", size = 423428, upload-time = "2026-07-16T15:06:17.912Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/7c/8e3c6ad324ea5cb36604fc3f968554887891c316d9dfde57761611d907ad/fastapi-0.139.0-py3-none-any.whl", hash = "sha256:cf15e1e9e667ddb0ad63811e60bd11390d1aac838ca4a7a23f421807b2308189", size = 130339, upload-time = "2026-07-01T16:35:32.19Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/c7/cb03251d9dfb177246a9809a76f189d21df32dbd4a845951881d11323b7f/fastapi-0.139.2-py3-none-any.whl", hash = "sha256:b9ad015a835173d59865e2f5d8296fbc2b317bf56a2ba1a5bfbdd03de2fd4b1c", size = 130234, upload-time = "2026-07-16T15:06:19.557Z" },
 ]
 
 [[package]]
@@ -816,7 +816,7 @@ wheels = [
 
 [[package]]
 name = "tox"
-version = "4.56.4"
+version = "4.57.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
@@ -830,9 +830,9 @@ dependencies = [
     { name = "tomli-w" },
     { name = "virtualenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/aa/fc/903385f783a1d7b7670eb742654e8f6f109c7a5a65913f92dfee8d033ea7/tox-4.56.4.tar.gz", hash = "sha256:d49e371119ebfafb15054ad7ccff3d03027ccb65195fae3ac656b431b5524055", size = 286611, upload-time = "2026-07-08T23:59:07.033Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e9/27/21c5edac636f3897c8aef1d000f77dded5c5f55302025419dbb5500e3a35/tox-4.57.0.tar.gz", hash = "sha256:b2f758011dfbad7be4b4cc39d2cae21deeb3c3c186e6d7a92d7630eade4218cf", size = 287613, upload-time = "2026-07-17T21:13:07.713Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/f2/d2e2b6969203c319165860ba93272cf12c71d42acff5acd2c84d7543b460/tox-4.56.4-py3-none-any.whl", hash = "sha256:53bac88382b9638a5ce40fbaddd6076e1c8f638751af7bf8e759392c953df2f0", size = 217458, upload-time = "2026-07-08T23:59:05.21Z" },
+    { url = "https://files.pythonhosted.org/packages/4f/51/60df3181baa4ae491eb1d3998b0a7d221eb93ad8a6d43463a6fee648a02b/tox-4.57.0-py3-none-any.whl", hash = "sha256:ede907fa911b55cbf1e7dc823a5b455a164755a172124675b811210676ba31c2", size = 217717, upload-time = "2026-07-17T21:13:06.327Z" },
 ]
 
 [[package]]
