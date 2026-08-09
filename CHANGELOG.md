@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.9.0 (2026-08-09)
+
+### Bug Fixes
+
+- Make the field required and move the settings value into the schema example instead of the field
+  default.
+  ([`032d4f8`](https://github.com/Astro-BEAM-AUTh/backend/commit/032d4f899230a2bc3db2d99fe2742e81008b97f2))
+
+### Continuous Integration
+
+- **fix**: Add watchtower labels to itself to be part of the same scope set and switch the command
+  to arg list for deterministic parsing
+  ([`a7c322e`](https://github.com/Astro-BEAM-AUTh/backend/commit/a7c322eb300ac5a22564e6cd8df5b6664c682171))
+
+
 ## v0.8.3 (2026-08-09)
 
 ### Bug Fixes
