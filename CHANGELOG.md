@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.8.3 (2026-08-09)
+
+### Bug Fixes
+
+- **JWT**: Add extensive logging for debug purposes when it comes to authenticating the user and add
+  a small normalization to the supabase url in case needed.
+  ([`06a841e`](https://github.com/Astro-BEAM-AUTh/backend/commit/06a841e0529e0dae2a01c9e416c2eb2da2bd8ac1))
+
+### Continuous Integration
+
+- **fix**: Make watchtower have access to all docker configs
+  ([`b43648e`](https://github.com/Astro-BEAM-AUTh/backend/commit/b43648ea8b1b0e0a5ae9913127e53e01b112cb43))
+
+- **fix**: Manage the backend container more securely without affecting other things running on
+  docker and fix the access to the private images
+  ([`9ed2bc9`](https://github.com/Astro-BEAM-AUTh/backend/commit/9ed2bc92c2f180c32049fdd4b2e5dbe8a7bf5768))
+
+
 ## v0.8.2 (2026-07-09)
 
 ### Continuous Integration
