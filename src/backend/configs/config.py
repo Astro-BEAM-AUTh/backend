@@ -92,12 +92,22 @@ class Settings(BaseSettings):
     )
 
     @property
-    def supabase_issuer_url(self) -> str:
-        """Return the expected JWT issuer URL."""
+    def supabase_project_url(self) -> str:
+        """Return normalized Supabase project base URL (without /auth/v1)."""
         if not self.supabase_url:
             return ""
 
-        return f"{self.supabase_url.rstrip('/')}/auth/v1"
+        normalized = self.supabase_url.rstrip("/")
+        return normalized.removesuffix("/auth/v1")
+
+    @property
+    def supabase_issuer_url(self) -> str:
+        """Return the expected JWT issuer URL."""
+        project_url = self.supabase_project_url
+        if not project_url:
+            return ""
+
+        return f"{project_url}/auth/v1"
 
     @property
     def supabase_jwks_endpoint(self) -> str:
