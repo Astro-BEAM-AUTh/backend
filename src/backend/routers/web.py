@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from fastapi import APIRouter, status
 
 from backend.configs.config import settings
-from backend.models import StatusResponse
+from backend.models import StatusResponse, VersionResponse
 
 router = APIRouter(
     prefix="/web",
@@ -40,6 +40,25 @@ async def health_check() -> StatusResponse:
             "timestamp": datetime.now(UTC).isoformat(),
             "version": settings.app_version,
         },
+    )
+
+
+@router.get(
+    "/version/",
+    description="Get the current backend application version.",
+    responses={
+        status.HTTP_200_OK: {"description": "Backend version retrieved successfully"},
+    },
+)
+async def get_backend_version() -> VersionResponse:
+    """
+    Get the current backend application version.
+
+    Returns:
+        VersionResponse: Backend version information
+    """
+    return VersionResponse(
+        version=settings.app_version,
     )
 
 
