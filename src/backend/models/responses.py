@@ -31,12 +31,12 @@ class StatusResponse(BaseModel):
 class VersionResponse(BaseModel):
     """Response model for backend version information."""
 
-    version: str = Field(settings.app_version, description="Backend application version")
+    version: str = Field(..., description="Backend application version")
 
     model_config = {
         "json_schema_extra": {
             "example": {
-                "version": "1.0.0",
+                "version": settings.app_version,
             },
         },
     }
