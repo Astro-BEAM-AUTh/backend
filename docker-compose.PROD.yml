@@ -16,6 +16,9 @@ services:
   watchtower:
     image: nickfedor/watchtower:latest
     container_name: astro-backend-watchtower
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.scope=astro-backend
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${WATCHTOWER_DOCKER_CONFIG_DIR:-/home/pi/.docker}:/config:ro
@@ -25,5 +28,9 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_SCOPE=astro-backend
-    command: --scope astro-backend --rolling-restart --update-on-start
+    command:
+      - --scope
+      - astro-backend
+      - --rolling-restart
+      - --update-on-start
     restart: unless-stopped
