@@ -117,6 +117,11 @@ def _decode_supabase_token(token: str) -> dict[str, Any]:
     )
 
 
+def _token_fingerprint(token: str) -> str:
+    """Return a short non-reversible token fingerprint for log correlation."""
+    return sha256(token.encode("utf-8")).hexdigest()[:12]
+
+
 async def get_optional_principal(authorization: str | None = Header(default=None)) -> AuthPrincipal | None:
     """
     Return a verified Supabase principal if the request carries a bearer token.
@@ -128,20 +133,62 @@ async def get_optional_principal(authorization: str | None = Header(default=None
         AuthPrincipal | None: The verified principal or None if no valid token is provided
     """
     if not authorization:
+        logger.info("Auth context: missing authorization header")
         return None
 
     scheme, _, token = authorization.partition(" ")
     if scheme.lower() != "bearer" or not token.strip():
-        logger.warning("Invalid authorization header format")
+        logger.warning("Auth rejected: invalid authorization header format (scheme=%s)", scheme or "<empty>")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authorization header",
         )
 
+    token_str = token.strip()
+    token_fp = _token_fingerprint(token_str)
+
     try:
-        claims = _decode_supabase_token(token.strip())
+        claims = _decode_supabase_token(token_str)
+    except jwt.ExpiredSignatureError as exc:
+        logger.info("Auth rejected: expired token (token_fp=%s)", token_fp)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token",
+        ) from exc
+    except jwt.InvalidAudienceError as exc:
+        logger.warning(
+            "Auth rejected: JWT audience mismatch (token_fp=%s, expected_aud=%s)",
+            token_fp,
+            settings.supabase_audience,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token",
+        ) from exc
+    except jwt.InvalidIssuerError as exc:
+        logger.warning(
+            "Auth rejected: JWT issuer mismatch (token_fp=%s, expected_issuer=%s)",
+            token_fp,
+            settings.supabase_issuer_url,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token",
+        ) from exc
+    except jwt.InvalidSignatureError as exc:
+        logger.warning("Auth rejected: JWT signature validation failed (token_fp=%s)", token_fp)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token",
+        ) from exc
+    except jwt.PyJWTError as exc:
+        logger.warning("Auth rejected: JWT validation failed (token_fp=%s, reason=%s)", token_fp, exc)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token",
+        ) from exc
     except Exception as exc:
-        logger.warning("Failed to decode Supabase token: %s", exc)
+        logger.exception("Auth rejected: unexpected JWT verification failure (token_fp=%s)", token_fp)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired authentication token",
@@ -150,6 +197,12 @@ async def get_optional_principal(authorization: str | None = Header(default=None
     subject = str(claims.get("sub", "")).strip()
     email = str(claims.get("email", "")).strip()
     if not subject or not email:
+        logger.warning(
+            "Auth rejected: required claims missing (token_fp=%s, has_sub=%s, has_email=%s)",
+            token_fp,
+            bool(subject),
+            bool(email),
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication token is missing required claims",
