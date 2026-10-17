@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.9.1 (2026-10-17)
+
+
 ## v0.9.0 (2026-08-09)
 
 ### Bug Fixes
