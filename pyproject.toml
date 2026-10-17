@@ -15,8 +15,6 @@ dependencies = [
     "PyJWT[crypto]==2.10.1",
     "pydantic[email]==2.13.5",
     "pydantic-settings==2.15.0",
-    "python-dotenv==1.2.3",
-    "sqlalchemy==2.0.54",
     "uvicorn==0.54.0",
     "uvloop==0.22.1 ; sys_platform != 'win32'",
     "sqlmodel==0.0.47",
@@ -91,7 +89,7 @@ env_list = ["lint"] # Add more environments when needed
 [tool.tox.envs.lint]
 description = "Lint the codebase with ruff"
 deps = [
-    "ruff>=0.12.3",
+    "ruff==0.14.11",
 ]
 skip_install = true
 commands = [[ "ruff", "check", "src/", "tests/" ]]
