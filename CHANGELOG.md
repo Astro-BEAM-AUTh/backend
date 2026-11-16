@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- insertion marker -->
 
+## v0.9.2 (2026-11-16)
+
+### Deps
+
+- Bump the uv-dependencies group with 3 updates
+  ([`23695fa`](https://github.com/Astro-BEAM-AUTh/backend/commit/23695fadfdb2a678cb219acaae9376c08ebef5db))
+
+- Bump the uv-dependencies group with 4 updates
+  ([`c9190dc`](https://github.com/Astro-BEAM-AUTh/backend/commit/c9190dcf74cc128cd2bba70f9208b5c0b03a3e25))
+
+- Bump the uv-dependencies group with 5 updates
+  ([`9ceab54`](https://github.com/Astro-BEAM-AUTh/backend/commit/9ceab54c01279e18acb3818f5c95be59f31cc81d))
+
+- Bump the uv-dependencies group with 6 updates
+  ([`04c7e8f`](https://github.com/Astro-BEAM-AUTh/backend/commit/04c7e8feebc979eb55b6798bc99e48a1f2bcf0f0))
+
+- Bump the uv-dependencies group with 6 updates
+  ([`7c675c7`](https://github.com/Astro-BEAM-AUTh/backend/commit/7c675c741bec18e1d6b8ed4dbc8a205733b08dc4))
+
+
 ## v0.9.1 (2026-10-17)
 
 
